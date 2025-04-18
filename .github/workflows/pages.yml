@@ -44,15 +44,21 @@ jobs:
         with:
           name: spec-file
 
-      - name: Generate Swagger UI
-        uses: Legion2/swagger-ui-action@v1
+      - uses: actions/setup-node@v3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          output: swagger-ui
-          spec-file: openapi.yaml
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Install dependencies
+        run: |
+          npm i -g @redocly/cli@latest
+
+      - name: Generate Swagger UI
+        run: |
+          redocly build-docs openapi.yaml --output ./swagger-ui
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: swagger-ui
+          publish_dir: ./swagger-ui
