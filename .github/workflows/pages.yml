@@ -36,6 +36,8 @@ jobs:
   deploy:
     needs: generate-openapi-spec
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download openapi.yaml
         uses: actions/download-artifact@v4
