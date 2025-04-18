@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: spec-file
-          path: openapi.json
+          path: tsp-output/schema/openapi.yaml
 
   deploy:
     needs: generate-openapi-spec
