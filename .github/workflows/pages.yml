@@ -52,7 +52,7 @@ jobs:
 
       - name: Generate Swagger UI
         run: |
-          redocly build-docs openapi.yaml --output ./swagger-ui
+          redocly build-docs openapi.yaml --output ./swagger-ui/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
