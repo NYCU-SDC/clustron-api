@@ -14,7 +14,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
 
-      - name: Generate openapi.json
+      - name: Generate openapi.yaml
         run: |
           npm install -g @typespec/compiler
           tsp install
@@ -27,7 +27,7 @@ jobs:
         run: |
           tsp compile .
 
-      - name: Upload openapi.json
+      - name: Upload openapi.yaml
         uses: actions/upload-artifact@v4
         with:
           name: spec-file
@@ -37,7 +37,7 @@ jobs:
     needs: generate-openapi-spec
     runs-on: ubuntu-latest
     steps:
-      - name: Download openapi.json
+      - name: Download openapi.yaml
         uses: actions/download-artifact@v4
         with:
           name: spec-file
@@ -46,7 +46,7 @@ jobs:
         uses: Legion2/swagger-ui-action@v1
         with:
           output: swagger-ui
-          spec-file: openapi.json
+          spec-file: openapi.yaml
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
