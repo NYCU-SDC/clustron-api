@@ -25,7 +25,7 @@ jobs:
 
       - name: Compile
         run: |
-          tsp compile
+          tsp compile .
 
       - name: Upload openapi.json
         uses: actions/upload-artifact@v4
