@@ -39,31 +39,25 @@ namespace Pets {
   op getPet(@path petId: int32): {
     @statusCode statusCode: 200;
     @body pet: Pet;
-    // highlight-start
   } | {
     @statusCode statusCode: 404;
-    // highlight-end
   };
 
   @post
   op createPet(@body pet: Pet): {
     @statusCode statusCode: 201;
     @body newPet: Pet;
-    // highlight-start
   } | {
     @statusCode statusCode: 202;
     @body acceptedPet: Pet;
-    // highlight-end
   };
 
   @put
   op updatePet(@path petId: int32, @body pet: Pet): {
     @statusCode statusCode: 200;
     @body updatedPet: Pet;
-    // highlight-start
   } | {
     @statusCode statusCode: 404;
-    // highlight-end
   };
 
   @delete
