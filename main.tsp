@@ -1,10 +1,16 @@
 import "@typespec/http";
+import "@typespec/versioning";
 
 using Http;
 
-@service(#{ title: "Pet Store" })
+@service(#{ title: "Pet Store" , version: "1.0.0" })
 @server("https://example.com", "Single server endpoint")
+@versioned(Versions)
 namespace PetStore;
+
+enum Versions {
+  v1: "1.0.0",
+}
 
 @doc("Represent a Pet available in the PetStore")
 model Pet {
