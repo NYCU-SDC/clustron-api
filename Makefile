@@ -10,7 +10,7 @@ all: format compile
 
 format:
 	@echo -e ":: $(GREEN)Checking TypeSpec format...$(NC)"
-	@tsp format --check "**/*.tsp" \
+	@tsp format "**/*.tsp" \
 		&& echo -e "==> $(BLUE)Format check completed$(NC)" \
 		|| (echo -e "==> $(RED)Format check failed$(NC)" && exit 1)
 
