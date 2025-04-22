@@ -2,8 +2,9 @@ import "@typespec/http";
 import "@typespec/versioning";
 
 using Http;
+using Versioning;
 
-@service(#{ title: "Pet Store" , version: "1.0.0" })
+@service(#{ title: "Pet Store", version: "1.0.0" })
 @server("https://example.com", "Single server endpoint")
 @versioned(Versions)
 namespace PetStore;
