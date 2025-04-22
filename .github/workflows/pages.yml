@@ -2,8 +2,6 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   generate-openapi-spec:
@@ -32,7 +30,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: spec-file
-          path: tsp-output/schema/openapi.yaml
+          path: tsp-output/schema/openapi.1.0.0.yaml
+
+      - name: Upload swagger-ui
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-ui
+          path: swagger-ui.html
 
   deploy:
     needs: generate-openapi-spec
@@ -45,18 +49,29 @@ jobs:
         with:
           name: spec-file
 
+      - name: Download swagger-ui.html
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-ui
+
       - uses: actions/setup-node@v3
 
       - name: Install dependencies
         run: |
           npm i -g @redocly/cli@latest
 
-      - name: Generate Swagger UI
+      - name: Generate Redocly and Swagger UI
         run: |
-          redocly build-docs openapi.yaml --output ./swagger-ui/index.html
+          mkdir -p ./redocly-ui
+          redocly build-docs openapi.1.0.0.yaml --output ./redocly-ui/redocly.html
+
+          mkdir -p ./publish
+          cp openapi.1.0.0.yaml ./publish/
+          cp redocly-ui/redocly.html ./publish/
+          cp swagger-ui.html ./publish/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./swagger-ui
+          publish_dir: ./publish
