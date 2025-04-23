@@ -15,7 +15,9 @@ enum Versions {
 
 @doc("User settings that are needed for access to the machine.")
 model UserSettings {
+  @doc("The computer username of the user.")
   username: string;
+
   publicKey: string[];
 }
 
