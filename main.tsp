@@ -4,10 +4,10 @@ import "@typespec/versioning";
 using Http;
 using Versioning;
 
-@service(#{ title: "Pet Store", version: "1.0.0" })
+@service(#{ title: "Clustron api", version: "1.0.0" })
 @server("https://example.com", "Single server endpoint")
 @versioned(Versions)
-namespace PetStore;
+namespace Clustron;
 
 enum Versions {
   v1: "1.0.0",
