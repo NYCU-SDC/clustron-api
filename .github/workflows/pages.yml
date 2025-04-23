@@ -1,0 +1,77 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+
+jobs:
+  generate-openapi-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Install dependencies
+        run: |
+          npm install -g @typespec/compiler
+          tsp install
+
+      - name: Style check
+        run: |
+          tsp format --check "**/*.tsp"
+
+      - name: Compile
+        run: |
+          tsp compile .
+
+      - name: Upload openapi.yaml
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-file
+          path: tsp-output/schema/openapi.1.0.0.yaml
+
+      - name: Upload swagger-ui
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-ui
+          path: swagger-ui.html
+
+  deploy:
+    needs: generate-openapi-spec
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download openapi.yaml
+        uses: actions/download-artifact@v4
+        with:
+          name: spec-file
+
+      - name: Download swagger-ui.html
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-ui
+
+      - uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        run: |
+          npm i -g @redocly/cli@latest
+
+      - name: Generate Redocly and Swagger UI
+        run: |
+          mkdir -p ./redocly-ui
+          redocly build-docs openapi.1.0.0.yaml --output ./redocly-ui/redocly.html
+
+          mkdir -p ./publish
+          cp openapi.1.0.0.yaml ./publish/
+          cp redocly-ui/redocly.html ./publish/
+          cp swagger-ui.html ./publish/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./publish
