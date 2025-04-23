@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Pet Store
+  title: Clustron api
   version: 1.0.0
 tags: []
 paths:
