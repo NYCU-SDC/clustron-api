@@ -31,10 +31,28 @@ namespace Settings {
   };
 
   @route("/settings/username")
+  @get
+  op getUsername(): {
+    @statusCode statusCode: 200;
+    @body username: string;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @route("/settings/username")
   @put
   op updateUsername(@body username: string): {
     @statusCode statusCode: 200;
     @body username: string;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @route("/settings/publickey")
+  @get
+  op getPublicKey(): {
+    @statusCode statusCode: 200;
+    @body publicKey: string[];
   } | {
     @statusCode statusCode: 404;
   };
