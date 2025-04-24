@@ -127,7 +127,6 @@ components:
           type: array
           items:
             type: string
-      description: User settings that are needed for access to the machine.
     Versions:
       type: string
       enum:
