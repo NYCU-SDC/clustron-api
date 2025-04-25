@@ -16,7 +16,7 @@ format:
 
 compile:
 	@echo -e ":: $(GREEN)Compiling TypeSpec...$(NC)"
-	@npx tsp compile . \
+	@npx -p @typespec/compiler tsp compile . \
 		&& echo -e "==> $(BLUE)Compilation completed$(NC)" \
 		|| (echo -e "==> $(RED)Compilation failed$(NC)" && exit 1)
 
