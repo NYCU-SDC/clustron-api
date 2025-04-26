@@ -7,6 +7,7 @@ using Versioning;
 @service(#{ title: "Clustron API", version: "1.0.0" })
 @server("https://example.com", "Single server endpoint")
 @versioned(Versions)
+@route("/api")
 namespace Clustron;
 
 enum Versions {
