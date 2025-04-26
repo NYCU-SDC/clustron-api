@@ -4,71 +4,85 @@ import "@typespec/versioning";
 using Http;
 using Versioning;
 
-@service(#{ title: "Pet Store", version: "1.0.0" })
+@service(#{ title: "Clustron API", version: "1.0.0" })
 @server("https://example.com", "Single server endpoint")
 @versioned(Versions)
-namespace PetStore;
+namespace Clustron;
 
 enum Versions {
   v1: "1.0.0",
 }
 
-@doc("Represent a Pet available in the PetStore")
-model Pet {
-  id: int32;
-
-  @minLength(1)
-  name: string;
-
-  @minValue(0)
-  @maxValue(100)
-  age: int32;
-
-  kind: petType;
+model UserSettings {
+  @doc("The computer username of the user.")
+  username: string;
 }
 
-enum petType {
-  dog: "dog",
-  cat: "cat",
-  fish: "fish",
-  bird: "bird",
-  reptile: "reptile",
+model PublicKey {
+  @doc("The public key title set by the user.")
+  title: string;
+
+  @doc("The public key of the user.")
+  publicKey: string;
 }
 
-@route("/pets")
-namespace Pets {
+@tag("User")
+namespace Settings {
+  @route("/settings")
   @get
-  op listPets(@offset skip?: int32 = 0): {
-    @pageItems pets: Pet[];
-  };
-
-  @get
-  op getPet(@path petId: int32): {
+  op getUserSettings(): {
     @statusCode statusCode: 200;
-    @body pet: Pet;
+    @body settings: UserSettings;
   } | {
     @statusCode statusCode: 404;
   };
 
-  @post
-  op createPet(@body pet: Pet): {
-    @statusCode statusCode: 201;
-    @body newPet: Pet;
-  } | {
-    @statusCode statusCode: 202;
-    @body acceptedPet: Pet;
-  };
-
+  @route("/settings")
   @put
-  op updatePet(@path petId: int32, @body pet: Pet): {
+  op updateUsername(@body username: string): {
     @statusCode statusCode: 200;
-    @body updatedPet: Pet;
+    @body username: string;
   } | {
     @statusCode statusCode: 404;
   };
 
+  @route("/settings/username")
+  @get
+  op getUsername(): {
+    @statusCode statusCode: 200;
+    @body username: string;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @route("/publickey")
+  @get
+  op getPublicKey(
+    @doc("Get 10 head characters of publickey as short public key in 'publickey' field.")
+    @query
+    short?: boolean,
+  ): {
+    @statusCode statusCode: 200;
+    @body publicKey: PublicKey[];
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @route("/publickey")
+  @post
+  op addPublicKey(@body publicKey: string): {
+    @statusCode statusCode: 200;
+    @body publicKey: PublicKey;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @route("/publickey")
   @delete
-  op deletePet(@path petId: int32): {
-    @statusCode statusCode: 204;
+  op deletePublicKey(@body publicKey: string): {
+    @statusCode statusCode: 200;
+    @body title: string;
+  } | {
+    @statusCode statusCode: 404;
   };
 }

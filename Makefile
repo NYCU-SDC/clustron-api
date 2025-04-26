@@ -10,13 +10,13 @@ all: format compile
 
 format:
 	@echo -e ":: $(GREEN)Checking TypeSpec format...$(NC)"
-	@tsp format "**/*.tsp" \
+	@npx -p @typespec/compiler tsp format "**/*.tsp" \
 		&& echo -e "==> $(BLUE)Format check completed$(NC)" \
 		|| (echo -e "==> $(RED)Format check failed$(NC)" && exit 1)
 
 compile:
 	@echo -e ":: $(GREEN)Compiling TypeSpec...$(NC)"
-	@tsp compile . \
+	@npx -p @typespec/compiler tsp compile . \
 		&& echo -e "==> $(BLUE)Compilation completed$(NC)" \
 		|| (echo -e "==> $(RED)Compilation failed$(NC)" && exit 1)
 
