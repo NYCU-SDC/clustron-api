@@ -5,7 +5,7 @@ info:
 tags:
   - name: User
 paths:
-  /publickey:
+  /api/publickey:
     get:
       operationId: Settings_getPublicKey
       parameters:
@@ -69,7 +69,7 @@ paths:
           text/plain:
             schema:
               type: string
-  /settings:
+  /api/settings:
     get:
       operationId: Settings_getUserSettings
       parameters: []
@@ -104,7 +104,7 @@ paths:
           text/plain:
             schema:
               type: string
-  /settings/username:
+  /api/settings/username:
     get:
       operationId: Settings_getUsername
       parameters: []
