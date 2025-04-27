@@ -18,7 +18,7 @@ model UserSettings {
   @doc("The real name of the user.")
   username: string;
 
-  @doc("The computer hostname of the user.")
+  @doc("The computer account name of the user.")
   linuxUsername: string;
 }
 
