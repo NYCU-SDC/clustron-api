@@ -146,7 +146,7 @@ components:
       properties:
         username:
           type: string
-          description: The realname of the user.
+          description: The real name of the user.
         linuxUsername:
           type: string
           description: The computer hostname of the user.
