@@ -149,7 +149,7 @@ components:
           description: The real name of the user.
         linuxUsername:
           type: string
-          description: The computer hostname of the user.
+          description: The computer account name of the user.
     Versions:
       type: string
       enum:
