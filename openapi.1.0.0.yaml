@@ -46,19 +46,15 @@ paths:
       requestBody:
         required: true
         content:
-          text/plain:
+          application/json:
             schema:
-              type: string
+              $ref: '#/components/schemas/Settings.AddPublicKeyRequest'
     delete:
       operationId: Settings_deletePublicKey
       parameters: []
       responses:
         '200':
           description: The request has succeeded.
-          content:
-            text/plain:
-              schema:
-                type: string
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -66,9 +62,9 @@ paths:
       requestBody:
         required: true
         content:
-          text/plain:
+          application/json:
             schema:
-              type: string
+              $ref: '#/components/schemas/Settings.DeletePublicKeyRequest'
   /api/settings:
     get:
       operationId: Settings_getUserSettings
@@ -85,15 +81,15 @@ paths:
       tags:
         - User
     put:
-      operationId: Settings_updateUsername
+      operationId: Settings_updateSettings
       parameters: []
       responses:
         '200':
           description: The request has succeeded.
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/UserSettings'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -101,27 +97,28 @@ paths:
       requestBody:
         required: true
         content:
-          text/plain:
+          application/json:
             schema:
-              type: string
-  /api/settings/username:
-    get:
-      operationId: Settings_getUsername
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            text/plain:
-              schema:
-                type: string
-        '404':
-          description: The server cannot find the requested resource.
-      tags:
-        - User
+              $ref: '#/components/schemas/UserSettings'
 components:
   schemas:
     PublicKey:
+      type: object
+      required:
+        - id
+        - title
+        - publicKey
+      properties:
+        id:
+          type: string
+          description: The public key id in UUID format.
+        title:
+          type: string
+          description: The public key title set by the user.
+        publicKey:
+          type: string
+          description: The public key of the user.
+    Settings.AddPublicKeyRequest:
       type: object
       required:
         - title
@@ -133,14 +130,26 @@ components:
         publicKey:
           type: string
           description: The public key of the user.
+    Settings.DeletePublicKeyRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The public key id in UUID format.
     UserSettings:
       type: object
       required:
         - username
+        - linuxUsername
       properties:
         username:
           type: string
-          description: The computer username of the user.
+          description: The realname of the user.
+        linuxUsername:
+          type: string
+          description: The computer hostname of the user.
     Versions:
       type: string
       enum:
