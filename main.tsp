@@ -15,7 +15,7 @@ enum Versions {
 }
 
 model UserSettings {
-  @doc("The realname of the user.")
+  @doc("The real name of the user.")
   username: string;
 
   @doc("The computer hostname of the user.")
