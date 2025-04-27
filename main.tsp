@@ -15,11 +15,17 @@ enum Versions {
 }
 
 model UserSettings {
-  @doc("The computer username of the user.")
+  @doc("The realname of the user.")
   username: string;
+
+  @doc("The computer hostname of the user.")
+  linuxUsername: string;
 }
 
 model PublicKey {
+  @doc("The public key id in UUID format.")
+  id: string;
+
   @doc("The public key title set by the user.")
   title: string;
 
@@ -29,6 +35,19 @@ model PublicKey {
 
 @tag("User")
 namespace Settings {
+  model AddPublicKeyRequest {
+    @doc("The public key title set by the user.")
+    title: string;
+
+    @doc("The public key of the user.")
+    publicKey: string;
+  }
+
+  model DeletePublicKeyRequest {
+    @doc("The public key id in UUID format.")
+    id: string;
+  }
+
   @route("/settings")
   @get
   op getUserSettings(): {
@@ -40,18 +59,9 @@ namespace Settings {
 
   @route("/settings")
   @put
-  op updateUsername(@body username: string): {
+  op updateSettings(@body body: UserSettings): {
     @statusCode statusCode: 200;
-    @body username: string;
-  } | {
-    @statusCode statusCode: 404;
-  };
-
-  @route("/settings/username")
-  @get
-  op getUsername(): {
-    @statusCode statusCode: 200;
-    @body username: string;
+    @body newSettings: UserSettings;
   } | {
     @statusCode statusCode: 404;
   };
@@ -71,7 +81,7 @@ namespace Settings {
 
   @route("/publickey")
   @post
-  op addPublicKey(@body publicKey: string): {
+  op addPublicKey(@body body: AddPublicKeyRequest): {
     @statusCode statusCode: 200;
     @body publicKey: PublicKey;
   } | {
@@ -80,9 +90,8 @@ namespace Settings {
 
   @route("/publickey")
   @delete
-  op deletePublicKey(@body publicKey: string): {
+  op deletePublicKey(@body body: DeletePublicKeyRequest): {
     @statusCode statusCode: 200;
-    @body title: string;
   } | {
     @statusCode statusCode: 404;
   };
