@@ -4,7 +4,26 @@ info:
   version: 1.0.0
 tags:
   - name: User
+  - name: Auth
 paths:
+  /api/login/oauth2/google:
+    get:
+      operationId: Auth_loginGoogle
+      parameters:
+        - name: c
+          in: query
+          required: true
+          description: The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)
+          schema:
+            type: string
+          explode: false
+      responses:
+        '302':
+          description: Redirection
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Auth
   /api/publickey:
     get:
       operationId: Settings_getPublicKey
@@ -24,7 +43,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PublicKey'
+                  $ref: '#/components/schemas/Settings.PublicKey'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -38,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicKey'
+                $ref: '#/components/schemas/Settings.PublicKey'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -65,6 +84,27 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Settings.DeletePublicKeyRequest'
+  /api/refresh/{refresh_token}:
+    get:
+      operationId: Auth_refreshToken
+      parameters:
+        - name: refresh_token
+          in: path
+          required: true
+          description: The refresh token to use for refreshing the access token.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth.RefreshToken'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Auth
   /api/settings:
     get:
       operationId: Settings_getUserSettings
@@ -75,7 +115,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSettings'
+                $ref: '#/components/schemas/Settings.UserSettings'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -89,7 +129,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSettings'
+                $ref: '#/components/schemas/Settings.UserSettings'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -99,25 +139,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserSettings'
+              $ref: '#/components/schemas/Settings.UserSettings'
 components:
   schemas:
-    PublicKey:
+    Auth.RefreshToken:
       type: object
       required:
-        - id
-        - title
-        - publicKey
+        - accessToken
+        - expirationTime
+        - refreshToken
       properties:
-        id:
+        accessToken:
           type: string
-          description: The public key id in UUID format.
-        title:
+          description: The new JWT
+        expirationTime:
+          type: integer
+          description: The expiration date of the refresh token.
+        refreshToken:
           type: string
-          description: The public key title set by the user.
-        publicKey:
-          type: string
-          description: The public key of the user.
+          description: The new refresh token.
     Settings.AddPublicKeyRequest:
       type: object
       required:
@@ -138,7 +178,23 @@ components:
         id:
           type: string
           description: The public key id in UUID format.
-    UserSettings:
+    Settings.PublicKey:
+      type: object
+      required:
+        - id
+        - title
+        - publicKey
+      properties:
+        id:
+          type: string
+          description: The public key id in UUID format.
+        title:
+          type: string
+          description: The public key title set by the user.
+        publicKey:
+          type: string
+          description: The public key of the user.
+    Settings.UserSettings:
       type: object
       required:
         - username
