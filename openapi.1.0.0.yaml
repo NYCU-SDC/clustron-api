@@ -64,7 +64,7 @@ paths:
         - Group
     post:
       operationId: Groups_createGroup
-      description: Create a new group.
+      description: Create a new group. Only admin level can reach this endpoint.
       parameters: []
       responses:
         '200':
@@ -107,7 +107,7 @@ paths:
   /api/groups/{id}/archive:
     post:
       operationId: Groups_archiveGroup
-      description: Archive a group.
+      description: Archive a group. Will reject the request from access level 'user', 'group-admin'.
       parameters:
         - name: id
           in: path
@@ -124,7 +124,7 @@ paths:
   /api/groups/{id}/members:
     get:
       operationId: Groups_getMembers
-      description: Get all members of a group.
+      description: Get all members of a group. Will reject the request from access level 'user'.
       parameters:
         - name: id
           in: path
@@ -184,7 +184,7 @@ paths:
         - Group
     post:
       operationId: Groups_addMember
-      description: Add a member to a group.
+      description: Add a member to a group. Will reject the request from access level 'user'.
       parameters:
         - name: id
           in: path
@@ -211,7 +211,7 @@ paths:
   /api/groups/{id}/members/{memberId}:
     delete:
       operationId: Groups_removeMember
-      description: Remove a member from a group.
+      description: Remove a member from a group. Will reject the request from access level 'user'
       parameters:
         - name: id
           in: path
@@ -232,7 +232,7 @@ paths:
         - Group
     put:
       operationId: Groups_updateMember
-      description: Update a member's access level.
+      description: Update a member's access level.  Will reject the request from access level 'user'
       parameters:
         - name: id
           in: path
@@ -264,7 +264,7 @@ paths:
   /api/groups/{id}/unarchive:
     post:
       operationId: Groups_unarchiveGroup
-      description: Unarchive a group.
+      description: Unarchive a group. Will reject the request from access level 'user', 'group-admin'.
       parameters:
         - name: id
           in: path
@@ -506,9 +506,7 @@ components:
         id:
           $ref: '#/components/schemas/uuid'
         role:
-          allOf:
-            - $ref: '#/components/schemas/Groups.Role'
-          description: The access level of the user.
+          $ref: '#/components/schemas/Groups.Role'
     PublicKey:
       type: object
       required:
