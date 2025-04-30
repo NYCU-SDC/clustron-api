@@ -34,8 +34,6 @@ namespace Clustron.Groups {
 
   model UpdateMemberRequest {
     id: uuid;
-
-    @doc("The access level of the user.")
     role: Role;
   }
 
@@ -74,7 +72,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Get all members of a group.")
+  @doc("Get all members of a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/members")
   @get
   op getMembers(id: string, ...PaginatedParams): {
@@ -84,7 +82,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Create a new group.")
+  @doc("Create a new group. Only admin level can reach this endpoint.")
   @route("/groups")
   @post
   op createGroup(@body body: CreateGroupRequest): {
@@ -94,7 +92,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Archive a group.")
+  @doc("Archive a group. Will reject the request from access level 'user', 'group-admin'.")
   @route("/groups/{id}/archive")
   @post
   op archiveGroup(id: string): {
@@ -103,7 +101,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Unarchive a group.")
+  @doc("Unarchive a group. Will reject the request from access level 'user', 'group-admin'.")
   @route("/groups/{id}/unarchive")
   @post
   op unarchiveGroup(id: string): {
@@ -112,7 +110,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Add a member to a group.")
+  @doc("Add a member to a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/members")
   @post
   op addMember(id: string, @body body: AddMemberRequest): {
@@ -122,7 +120,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Remove a member from a group.")
+  @doc("Remove a member from a group. Will reject the request from access level 'user'")
   @route("/groups/{id}/members/{memberId}")
   @delete
   op removeMember(id: string, memberId: string): {
@@ -131,7 +129,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Update a member's access level.")
+  @doc("Update a member's access level.  Will reject the request from access level 'user'")
   @route("/groups/{id}/members/{memberId}")
   @put
   op updateMember(
