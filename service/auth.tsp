@@ -31,7 +31,7 @@ namespace Clustron.Auth {
     @statusCode statusCode: 404;
   };
 
-  @route("/refresh/{refresh_token}")
+  @route("/refreshToken/{refreshToken}")
   @get
   op refreshToken(
     @doc("The refresh token to use for refreshing the access token.")
