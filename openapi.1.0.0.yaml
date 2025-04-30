@@ -17,6 +17,13 @@ paths:
           schema:
             type: string
           explode: false
+        - name: r
+          in: query
+          required: false
+          description: The redirect URL for login callback.
+          schema:
+            type: string
+          explode: false
       responses:
         '302':
           description: Redirection
@@ -84,11 +91,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Settings.DeletePublicKeyRequest'
-  /api/refresh/{refresh_token}:
+  /api/refreshToken/{refreshToken}:
     get:
       operationId: Auth_refreshToken
       parameters:
-        - name: refresh_token
+        - name: refreshToken
           in: path
           required: true
           description: The refresh token to use for refreshing the access token.
