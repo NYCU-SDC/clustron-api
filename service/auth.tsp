@@ -21,6 +21,10 @@ namespace Clustron.Auth {
     @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
     @query
     c: string,
+
+    @doc("The redirect URL for login callback.")
+    @query
+    r?: string,
   ): {
     @statusCode statusCode: 302;
   } | {
@@ -32,7 +36,7 @@ namespace Clustron.Auth {
   op refreshToken(
     @doc("The refresh token to use for refreshing the access token.")
     @path
-    refresh_token: string,
+    refreshToken: string,
   ): {
     @statusCode statusCode: 200;
     @body refreshToken: RefreshToken;
