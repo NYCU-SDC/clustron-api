@@ -208,7 +208,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Groups.AddMemberRequest'
+              type: array
+              items:
+                $ref: '#/components/schemas/Groups.AddMemberRequest'
   /api/groups/{id}/members/{memberId}:
     delete:
       operationId: Groups_removeMember
@@ -492,8 +494,7 @@ components:
             - type: string
           description: The email or student id of the user.
         role:
-          allOf:
-            - $ref: '#/components/schemas/Groups.Role'
+          type: string
           description: The access level of the user.
     Groups.CreateGroupRequest:
       type: object
@@ -540,7 +541,6 @@ components:
         - email
         - studentId
         - role
-        - accessLevel
       properties:
         id:
           $ref: '#/components/schemas/uuid'
@@ -552,14 +552,16 @@ components:
           type: string
         role:
           $ref: '#/components/schemas/Groups.Role'
+    Groups.Role:
+      type: object
+      required:
+        - role
+        - accessLevel
+      properties:
+        role:
+          type: string
         accessLevel:
           $ref: '#/components/schemas/Groups.AccessLevel'
-    Groups.Role:
-      type: string
-      enum:
-        - student
-        - teacher
-        - teacherAssistant
     Groups.UpdateMemberRequest:
       type: object
       required:
@@ -569,7 +571,7 @@ components:
         id:
           $ref: '#/components/schemas/uuid'
         role:
-          $ref: '#/components/schemas/Groups.Role'
+          type: string
     Settings.AddPublicKeyRequest:
       type: object
       required:
