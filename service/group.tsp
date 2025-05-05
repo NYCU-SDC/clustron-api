@@ -10,6 +10,7 @@ namespace Clustron.Groups {
   }
 
   model Role {
+    id: uuid;
     role: string;
     accessLevel: AccessLevel;
   }
