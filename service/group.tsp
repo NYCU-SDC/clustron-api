@@ -9,10 +9,9 @@ namespace Clustron.Groups {
     User: "user",
   }
 
-  enum Role {
-    Student: "student",
-    Teacher: "teacher",
-    TeacherAssistant: "teacherAssistant",
+  model Role {
+    role: string;
+    accessLevel: AccessLevel;
   }
 
   model MemberResponse {
@@ -21,7 +20,6 @@ namespace Clustron.Groups {
     email: email;
     studentId: string;
     role: Role;
-    accessLevel: AccessLevel;
   }
 
   model AddMemberRequest {
@@ -29,12 +27,12 @@ namespace Clustron.Groups {
     member: email | string;
 
     @doc("The access level of the user.")
-    role: Role;
+    role: string;
   }
 
   model UpdateMemberRequest {
     id: uuid;
-    role: Role;
+    role: string;
   }
 
   model GroupResponse {
@@ -113,7 +111,7 @@ namespace Clustron.Groups {
   @doc("Add a member to a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/members")
   @post
-  op addMember(id: string, @body body: AddMemberRequest): {
+  op addMember(id: string, @body body: AddMemberRequest[]): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
   } | {
