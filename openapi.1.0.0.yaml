@@ -3,9 +3,282 @@ info:
   title: Clustron API
   version: 1.0.0
 tags:
+  - name: Group
   - name: User
   - name: Auth
 paths:
+  /api/groups:
+    get:
+      operationId: Groups_getGroups
+      description: Get all groups of the user.
+      parameters:
+        - $ref: '#/components/parameters/PaginatedParams.page'
+        - $ref: '#/components/parameters/PaginatedParams.size'
+        - $ref: '#/components/parameters/PaginatedParams.sort'
+        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - currentPage
+                  - pageSize
+                  - hasNextPage
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Groups.GroupResponse'
+                  totalPages:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  totalItems:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 100
+                  currentPage:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  hasNextPage:
+                    type: boolean
+                    examples:
+                      - true
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+    post:
+      operationId: Groups_createGroup
+      description: Create a new group. Only admin level can reach this endpoint.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.CreateGroupRequest'
+  /api/groups/{id}:
+    get:
+      operationId: Groups_getGroupById
+      description: Get a group by id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+  /api/groups/{id}/archive:
+    post:
+      operationId: Groups_archiveGroup
+      description: Archive a group. Will reject the request from access level 'user', 'group-admin'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+  /api/groups/{id}/members:
+    get:
+      operationId: Groups_getMembers
+      description: Get all members of a group. Will reject the request from access level 'user'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PaginatedParams.page'
+        - $ref: '#/components/parameters/PaginatedParams.size'
+        - $ref: '#/components/parameters/PaginatedParams.sort'
+        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - currentPage
+                  - pageSize
+                  - hasNextPage
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Groups.MemberResponse'
+                  totalPages:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  totalItems:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 100
+                  currentPage:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  hasNextPage:
+                    type: boolean
+                    examples:
+                      - true
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+    post:
+      operationId: Groups_addMember
+      description: Add a member to a group. Will reject the request from access level 'user'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.MemberResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.AddMemberRequest'
+  /api/groups/{id}/members/{memberId}:
+    delete:
+      operationId: Groups_removeMember
+      description: Remove a member from a group. Will reject the request from access level 'user'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+    put:
+      operationId: Groups_updateMember
+      description: Update a member's access level.  Will reject the request from access level 'user'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.MemberResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.UpdateMemberRequest'
+  /api/groups/{id}/unarchive:
+    post:
+      operationId: Groups_unarchiveGroup
+      description: Unarchive a group. Will reject the request from access level 'user', 'group-admin'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
   /api/login/oauth2/google:
     get:
       operationId: Auth_loginGoogle
@@ -148,6 +421,42 @@ paths:
             schema:
               $ref: '#/components/schemas/Settings.UserSettings'
 components:
+  parameters:
+    PaginatedParams.page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+      explode: false
+    PaginatedParams.size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+      explode: false
+    PaginatedParams.sort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+      explode: false
+    PaginatedParams.sortBy:
+      name: sortBy
+      in: query
+      required: false
+      schema:
+        type: string
+      explode: false
   schemas:
     Auth.RefreshToken:
       type: object
@@ -165,6 +474,102 @@ components:
         refreshToken:
           type: string
           description: The new refresh token.
+    Groups.AccessLevel:
+      type: string
+      enum:
+        - organizer
+        - groupAdmin
+        - user
+    Groups.AddMemberRequest:
+      type: object
+      required:
+        - member
+        - role
+      properties:
+        member:
+          anyOf:
+            - $ref: '#/components/schemas/email'
+            - type: string
+          description: The email or student id of the user.
+        role:
+          allOf:
+            - $ref: '#/components/schemas/Groups.Role'
+          description: The access level of the user.
+    Groups.CreateGroupRequest:
+      type: object
+      required:
+        - title
+        - description
+        - members
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups.AddMemberRequest'
+    Groups.GroupResponse:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - isArchived
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        title:
+          type: string
+        description:
+          type: string
+        isArchived:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    Groups.MemberResponse:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - studentId
+        - role
+        - accessLevel
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        username:
+          type: string
+        email:
+          $ref: '#/components/schemas/email'
+        studentId:
+          type: string
+        role:
+          $ref: '#/components/schemas/Groups.Role'
+        accessLevel:
+          $ref: '#/components/schemas/Groups.AccessLevel'
+    Groups.Role:
+      type: string
+      enum:
+        - student
+        - teacher
+        - teacherAssistant
+    Groups.UpdateMemberRequest:
+      type: object
+      required:
+        - id
+        - role
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        role:
+          $ref: '#/components/schemas/Groups.Role'
     Settings.AddPublicKeyRequest:
       type: object
       required:
@@ -217,6 +622,12 @@ components:
       type: string
       enum:
         - 1.0.0
+    email:
+      type: string
+      format: email
+    uuid:
+      type: string
+      format: uuid
 servers:
   - url: https://example.com
     description: Single server endpoint
