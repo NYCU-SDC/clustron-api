@@ -43,6 +43,9 @@ namespace Clustron.Groups {
     isArchived: boolean;
     createdAt: string;
     updatedAt: string;
+    me: {
+      role: Role;
+    };
   }
 
   model CreateGroupRequest {
