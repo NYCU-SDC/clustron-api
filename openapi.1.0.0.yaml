@@ -307,23 +307,6 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Auth
-  /api/logout:
-    post:
-      operationId: Auth_logout
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-        '404':
-          description: The server cannot find the requested resource.
-      tags:
-        - Auth
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Auth.LogoutRequest'
   /api/publickey:
     get:
       operationId: Settings_getPublicKey
@@ -580,14 +563,6 @@ components:
         accessLevel:
           type: string
           description: The access level of the role.
-    Auth.LogoutRequest:
-      type: object
-      required:
-        - refreshToken
-      properties:
-        refreshToken:
-          type: string
-          description: The refresh token to use for logging out.
     Auth.RefreshToken:
       type: object
       required:
@@ -648,6 +623,7 @@ components:
         - isArchived
         - createdAt
         - updatedAt
+        - me
       properties:
         id:
           $ref: '#/components/schemas/uuid'
@@ -661,6 +637,13 @@ components:
           type: string
         updatedAt:
           type: string
+        me:
+          type: object
+          properties:
+            role:
+              $ref: '#/components/schemas/Groups.Role'
+          required:
+            - role
     Groups.MemberResponse:
       type: object
       required:
