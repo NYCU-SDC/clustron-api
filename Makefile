@@ -24,4 +24,10 @@ clean:
 	@echo -e ":: $(GREEN)Cleaning build artifacts...$(NC)"
 	@rm -rf tsp-output \
 		&& echo -e "==> $(BLUE)Cleanup completed$(NC)" \
-		|| (echo -e "==> $(RED)Cleanup failed$(NC)" && exit 1) 
+		|| (echo -e "==> $(RED)Cleanup failed$(NC)" && exit 1)
+
+mock:
+	@docker run --init --rm \
+	    -v $(PWD):/api \
+        -p 4010:4010 stoplight/prism:4 \
+        mock -h 0.0.0.0 "/api/tsp-output/schema/openapi.1.0.0.yaml"
