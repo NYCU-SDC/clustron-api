@@ -4,6 +4,11 @@ using Http;
 
 @tag("Auth")
 namespace Clustron.Auth {
+  enum OAuthProviders {
+    google: "google",
+    nycu: "nycu",
+  }
+
   model RefreshToken {
     @doc("The new JWT")
     accessToken: string;
@@ -15,9 +20,13 @@ namespace Clustron.Auth {
     refreshToken: string;
   }
 
-  @route("/login/oauth2/google")
+  @route("/login/oauth/{provider}")
   @get
   op loginGoogle(
+    @doc("The OAuth2 provider to use for login.")
+    @path
+    provider: OAuthProviders,
+
     @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
     @query
     c: string,
