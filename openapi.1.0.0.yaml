@@ -657,6 +657,7 @@ components:
                   type: string
                   enum:
                     - membership
+                  description: The user is a member of the group.
                 role:
                   $ref: '#/components/schemas/Groups.Role'
               required:
@@ -668,6 +669,7 @@ components:
                   type: string
                   enum:
                     - adminOverride
+                  description: The admin user is not a member of the group.
               required:
                 - type
     Groups.MemberResponse:
