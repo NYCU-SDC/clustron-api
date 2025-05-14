@@ -28,12 +28,12 @@ namespace Clustron.Groups {
     member: email | string;
 
     @doc("The access level of the user.")
-    role: string;
+    role: uuid;
   }
 
   model UpdateMemberRequest {
     id: uuid;
-    role: string;
+    role: uuid;
   }
 
   model GroupResponse {
