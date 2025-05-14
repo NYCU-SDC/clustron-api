@@ -4,7 +4,7 @@ using Http;
 @tag("Group")
 namespace Clustron.Groups {
   enum AccessLevel {
-    Organizer: "organizer",
+    Organizer: "groupOwner",
     GroupAdmin: "groupAdmin",
     User: "user",
   }
@@ -44,7 +44,10 @@ namespace Clustron.Groups {
     createdAt: string;
     updatedAt: string;
     me: {
+      type: "membership";
       role: Role;
+    } | {
+      type: "adminOverride";
     };
   }
 
