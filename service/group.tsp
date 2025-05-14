@@ -44,9 +44,12 @@ namespace Clustron.Groups {
     createdAt: string;
     updatedAt: string;
     me: {
+      @doc("The user is a member of the group.")
       type: "membership";
+
       role: Role;
     } | {
+      @doc("The admin user is not a member of the group.")
       type: "adminOverride";
     };
   }
