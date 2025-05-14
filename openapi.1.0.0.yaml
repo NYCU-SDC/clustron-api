@@ -608,7 +608,8 @@ components:
             - type: string
           description: The email or student id of the user.
         role:
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/uuid'
           description: The access level of the user.
     Groups.CreateGroupRequest:
       type: object
@@ -710,7 +711,7 @@ components:
         id:
           $ref: '#/components/schemas/uuid'
         role:
-          type: string
+          $ref: '#/components/schemas/uuid'
     Settings.AddPublicKeyRequest:
       type: object
       required:
