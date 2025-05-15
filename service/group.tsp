@@ -4,7 +4,7 @@ using Http;
 @tag("Group")
 namespace Clustron.Groups {
   enum AccessLevel {
-    Organizer: "organizer",
+    Organizer: "groupOwner",
     GroupAdmin: "groupAdmin",
     User: "user",
   }
@@ -28,12 +28,12 @@ namespace Clustron.Groups {
     member: email | string;
 
     @doc("The access level of the user.")
-    role: string;
+    role: uuid;
   }
 
   model UpdateMemberRequest {
     id: uuid;
-    role: string;
+    role: uuid;
   }
 
   model GroupResponse {
@@ -44,7 +44,13 @@ namespace Clustron.Groups {
     createdAt: string;
     updatedAt: string;
     me: {
+      @doc("The user is a member of the group.")
+      type: "membership";
+
       role: Role;
+    } | {
+      @doc("The admin user is not a member of the group.")
+      type: "adminOverride";
     };
   }
 
