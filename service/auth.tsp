@@ -15,11 +15,6 @@ namespace Clustron.Auth {
     refreshToken: string;
   }
 
-  model LogoutRequest {
-    @doc("The refresh token to use for logging out.")
-    refreshToken: string;
-  }
-
   @route("/login/oauth2/google")
   @get
   op loginGoogle(
@@ -51,10 +46,7 @@ namespace Clustron.Auth {
 
   @route("/logout")
   @post
-  op logout(
-    @body
-    refreshToken: LogoutRequest,
-  ): {
+  op logout(): {
     @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
