@@ -282,10 +282,16 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Group
-  /api/login/oauth2/google:
+  /api/login/oauth/{provider}:
     get:
       operationId: Auth_loginGoogle
       parameters:
+        - name: provider
+          in: path
+          required: true
+          description: The OAuth2 provider to use for login.
+          schema:
+            $ref: '#/components/schemas/Auth.OAuthProviders'
         - name: c
           in: query
           required: true
@@ -303,17 +309,6 @@ paths:
       responses:
         '302':
           description: Redirection
-        '404':
-          description: The server cannot find the requested resource.
-      tags:
-        - Auth
-  /api/logout:
-    post:
-      operationId: Auth_logout
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -574,6 +569,11 @@ components:
         accessLevel:
           type: string
           description: The access level of the role.
+    Auth.OAuthProviders:
+      type: string
+      enum:
+        - google
+        - nycu
     Auth.RefreshToken:
       type: object
       required:
@@ -593,7 +593,7 @@ components:
     Groups.AccessLevel:
       type: string
       enum:
-        - organizer
+        - groupOwner
         - groupAdmin
         - user
     Groups.AddMemberRequest:
@@ -608,7 +608,8 @@ components:
             - type: string
           description: The email or student id of the user.
         role:
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/uuid'
           description: The access level of the user.
     Groups.CreateGroupRequest:
       type: object
@@ -634,6 +635,7 @@ components:
         - isArchived
         - createdAt
         - updatedAt
+        - me
       properties:
         id:
           $ref: '#/components/schemas/uuid'
@@ -647,6 +649,29 @@ components:
           type: string
         updatedAt:
           type: string
+        me:
+          anyOf:
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - membership
+                  description: The user is a member of the group.
+                role:
+                  $ref: '#/components/schemas/Groups.Role'
+              required:
+                - type
+                - role
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - adminOverride
+                  description: The admin user is not a member of the group.
+              required:
+                - type
     Groups.MemberResponse:
       type: object
       required:
@@ -688,7 +713,7 @@ components:
         id:
           $ref: '#/components/schemas/uuid'
         role:
-          type: string
+          $ref: '#/components/schemas/uuid'
     Settings.AddPublicKeyRequest:
       type: object
       required:
