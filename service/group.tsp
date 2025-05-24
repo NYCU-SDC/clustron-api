@@ -140,10 +140,10 @@ namespace Clustron.Groups {
   @route("/groups/{id}/members/{memberId}")
   @put
   op updateMember(
-    id: string,
-    memberId: string,
-    @body roleId: uuid,
-  ): {
+      id: string,
+      memberId: string,
+      @body body: UpdateMemberRequest,
+    ): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
   } | {
