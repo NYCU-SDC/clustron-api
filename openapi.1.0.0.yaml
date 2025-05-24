@@ -707,13 +707,12 @@ components:
     Groups.UpdateMemberRequest:
       type: object
       required:
-        - id
-        - role
+        - roleId
       properties:
-        id:
-          $ref: '#/components/schemas/uuid'
-        role:
-          $ref: '#/components/schemas/uuid'
+        roleId:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          description: The role id of the member.
     Settings.AddPublicKeyRequest:
       type: object
       required:
