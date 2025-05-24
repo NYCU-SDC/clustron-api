@@ -4,9 +4,9 @@ using Http;
 @tag("Group")
 namespace Clustron.Groups {
   enum AccessLevel {
-    Organizer: "groupOwner",
-    GroupAdmin: "groupAdmin",
-    User: "user",
+    GroupOwner: "GROUP_OWNER",
+    GroupAdmin: "GROUp_ADMIN",
+    User: "USER",
   }
 
   model Role {
