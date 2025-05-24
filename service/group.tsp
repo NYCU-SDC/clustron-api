@@ -32,7 +32,7 @@ namespace Clustron.Groups {
   }
 
   model UpdateMemberRequest {
-    role: uuid;
+    id: uuid;
   }
 
   model GroupResponse {
