@@ -32,7 +32,6 @@ namespace Clustron.Groups {
   }
 
   model UpdateMemberRequest {
-    id: uuid;
     role: uuid;
   }
 
@@ -143,7 +142,7 @@ namespace Clustron.Groups {
   op updateMember(
     id: string,
     memberId: string,
-    @body body: UpdateMemberRequest,
+    @body roleId: uuid,
   ): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
