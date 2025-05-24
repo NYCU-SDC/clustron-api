@@ -32,8 +32,8 @@ namespace Clustron.Groups {
   }
 
   model UpdateMemberRequest {
-    id: uuid;
-    role: uuid;
+    @doc("The role id of the member.")
+    roleId: uuid;
   }
 
   model GroupResponse {
