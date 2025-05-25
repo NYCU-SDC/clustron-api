@@ -27,8 +27,8 @@ namespace Clustron.Groups {
     @doc("The email or student id of the user.")
     member: email | string;
 
-    @doc("The access level of the user.")
-    role: uuid;
+    @doc("The role id of the member.")
+    roleId: uuid;
   }
 
   model UpdateMemberRequest {
