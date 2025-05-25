@@ -5,7 +5,7 @@ using Http;
 namespace Clustron.Groups {
   enum AccessLevel {
     GroupOwner: "GROUP_OWNER",
-    GroupAdmin: "GROUp_ADMIN",
+    GroupAdmin: "GROUP_ADMIN",
     User: "USER",
   }
 
