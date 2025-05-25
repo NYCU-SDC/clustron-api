@@ -17,7 +17,7 @@ namespace Clustron.Groups {
 
   model MemberResponse {
     id: uuid;
-    username: string;
+    fullName: string;
     email: email;
     studentId: string;
     role: Role;
