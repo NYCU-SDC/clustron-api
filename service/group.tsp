@@ -150,4 +150,12 @@ namespace Clustron.Groups {
   } | {
     @statusCode statusCode: 404;
   };
+
+  @doc("Get all group roles.")
+  @route("/groups/roles")
+  @get
+  op getGroupRoles(): {
+    @statusCode statusCode: 200;
+    @body roles: Role[];
+  };
 }
