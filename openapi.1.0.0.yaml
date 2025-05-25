@@ -600,17 +600,17 @@ components:
       type: object
       required:
         - member
-        - role
+        - roleId
       properties:
         member:
           anyOf:
             - $ref: '#/components/schemas/email'
             - type: string
           description: The email or student id of the user.
-        role:
+        roleId:
           allOf:
             - $ref: '#/components/schemas/uuid'
-          description: The access level of the user.
+          description: The role id of the member.
     Groups.CreateGroupRequest:
       type: object
       required:
