@@ -209,9 +209,7 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Groups.AddMemberRequest'
+              $ref: '#/components/schemas/Groups.AddMembersRequest'
   /api/groups/{id}/members/{memberId}:
     delete:
       operationId: Groups_removeMember
@@ -628,6 +626,15 @@ components:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The role id of the member.
+    Groups.AddMembersRequest:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups.AddMemberRequest'
     Groups.CreateGroupRequest:
       type: object
       required:
