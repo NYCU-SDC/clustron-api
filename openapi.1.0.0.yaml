@@ -313,9 +313,26 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Auth
+  /api/onboarding:
+    post:
+      operationId: User_onboardUser
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User.OnboardingRequest'
   /api/publickey:
     get:
-      operationId: Settings_getPublicKey
+      operationId: User_getPublicKey
       parameters:
         - name: short
           in: query
@@ -332,13 +349,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Settings.PublicKey'
+                  $ref: '#/components/schemas/User.PublicKey'
         '404':
           description: The server cannot find the requested resource.
       tags:
         - User
     post:
-      operationId: Settings_addPublicKey
+      operationId: User_addPublicKey
       parameters: []
       responses:
         '200':
@@ -346,7 +363,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Settings.PublicKey'
+                $ref: '#/components/schemas/User.PublicKey'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -356,9 +373,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Settings.AddPublicKeyRequest'
+              $ref: '#/components/schemas/User.AddPublicKeyRequest'
     delete:
-      operationId: Settings_deletePublicKey
+      operationId: User_deletePublicKey
       parameters: []
       responses:
         '200':
@@ -372,7 +389,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Settings.DeletePublicKeyRequest'
+              $ref: '#/components/schemas/User.DeletePublicKeyRequest'
   /api/refreshToken/{refreshToken}:
     get:
       operationId: Auth_refreshToken
@@ -486,7 +503,7 @@ paths:
               $ref: '#/components/schemas/Admin.CreateRoleRequest'
   /api/settings:
     get:
-      operationId: Settings_getUserSettings
+      operationId: User_getUserSettings
       parameters: []
       responses:
         '200':
@@ -494,13 +511,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Settings.UserSettings'
+                $ref: '#/components/schemas/User.Settings'
         '404':
           description: The server cannot find the requested resource.
       tags:
         - User
     put:
-      operationId: Settings_updateSettings
+      operationId: User_updateSettings
       parameters: []
       responses:
         '200':
@@ -508,7 +525,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Settings.UserSettings'
+                $ref: '#/components/schemas/User.Settings'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -518,7 +535,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Settings.UserSettings'
+              $ref: '#/components/schemas/User.Settings'
 components:
   parameters:
     PaginatedParams.page:
@@ -713,7 +730,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The role id of the member.
-    Settings.AddPublicKeyRequest:
+    User.AddPublicKeyRequest:
       type: object
       required:
         - title
@@ -725,7 +742,7 @@ components:
         publicKey:
           type: string
           description: The public key of the user.
-    Settings.DeletePublicKeyRequest:
+    User.DeletePublicKeyRequest:
       type: object
       required:
         - id
@@ -733,7 +750,15 @@ components:
         id:
           type: string
           description: The public key id in UUID format.
-    Settings.PublicKey:
+    User.OnboardingRequest:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          description: The real name of the user.
+    User.PublicKey:
       type: object
       required:
         - id
@@ -749,7 +774,7 @@ components:
         publicKey:
           type: string
           description: The public key of the user.
-    Settings.UserSettings:
+    User.Settings:
       type: object
       required:
         - username
