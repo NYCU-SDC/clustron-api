@@ -23,6 +23,10 @@ namespace Clustron.Groups {
     role: Role;
   }
 
+  model AddMembersRequest {
+    members: AddMemberRequest[];
+  }
+
   model AddMemberRequest {
     @doc("The email or student id of the user.")
     member: email | string;
@@ -121,7 +125,7 @@ namespace Clustron.Groups {
   @doc("Add a member to a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/members")
   @post
-  op addMember(id: string, @body body: AddMemberRequest[]): {
+  op addMember(id: string, @body body: AddMembersRequest): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
   } | {
