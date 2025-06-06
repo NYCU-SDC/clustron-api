@@ -593,9 +593,9 @@ components:
     Groups.AccessLevel:
       type: string
       enum:
-        - groupOwner
-        - groupAdmin
-        - user
+        - GROUP_OWNER
+        - GROUP_ADMIN
+        - USER
     Groups.AddMemberRequest:
       type: object
       required:
