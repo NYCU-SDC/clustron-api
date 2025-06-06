@@ -3,8 +3,8 @@ import "@typespec/http";
 using Http;
 
 @tag("User")
-namespace Clustron.Settings {
-  model UserSettings {
+namespace Clustron.User {
+  model Settings {
     @doc("The real name of the user.")
     username: string;
 
@@ -36,20 +36,25 @@ namespace Clustron.Settings {
     id: string;
   }
 
+  model OnboardingRequest {
+    @doc("The real name of the user.")
+    username: string;
+  }
+
   @route("/settings")
   @get
   op getUserSettings(): {
     @statusCode statusCode: 200;
-    @body settings: UserSettings;
+    @body settings: Settings;
   } | {
     @statusCode statusCode: 404;
   };
 
   @route("/settings")
   @put
-  op updateSettings(@body body: UserSettings): {
+  op updateSettings(@body body: Settings): {
     @statusCode statusCode: 200;
-    @body newSettings: UserSettings;
+    @body newSettings: Settings;
   } | {
     @statusCode statusCode: 404;
   };
@@ -82,5 +87,15 @@ namespace Clustron.Settings {
     @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
+  };
+
+  @route("/onboarding")
+  @post
+  op onboardUser(@body body: OnboardingRequest): {
+    @statusCode statusCode: 200;
+  } | {
+    @doc("User already onboarded.")
+    @statusCode
+    statusCode: 400;
   };
 }
