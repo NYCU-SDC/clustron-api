@@ -761,10 +761,14 @@ components:
       type: object
       required:
         - username
+        - linuxUsername
       properties:
         username:
           type: string
           description: The real name of the user.
+        linuxUsername:
+          type: string
+          description: The computer account name of the user.
     User.PublicKey:
       type: object
       required:
