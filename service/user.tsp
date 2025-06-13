@@ -6,7 +6,7 @@ using Http;
 namespace Clustron.User {
   model Settings {
     @doc("The real name of the user.")
-    username: string;
+    fullName: string;
 
     @doc("The computer account name of the user.")
     linuxUsername: string;
