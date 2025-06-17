@@ -311,6 +311,17 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Auth
+  /api/logout:
+    post:
+      operationId: Auth_logout
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Auth
   /api/onboarding:
     post:
       operationId: User_onboardUser
