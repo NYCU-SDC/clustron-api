@@ -719,12 +719,12 @@ components:
       type: object
       required:
         - id
-        - role
+        - roleName
         - accessLevel
       properties:
         id:
           $ref: '#/components/schemas/uuid'
-        role:
+        roleName:
           type: string
         accessLevel:
           $ref: '#/components/schemas/Groups.AccessLevel'
