@@ -173,11 +173,11 @@ namespace Clustron.Groups {
   };
 
   @doc("Update a pending member's access level.  Will reject the request from access level 'user'")
-  @route("/groups/{id}/pendingMembers/{memberId}")
+  @route("/groups/{id}/pendingMembers/{pendingId}")
   @put
   op updatePendingMember(
     id: string,
-    memberId: string,
+    pendingId: string,
     @body body: UpdateMemberRequest,
   ): {
     @statusCode statusCode: 200;
@@ -187,9 +187,9 @@ namespace Clustron.Groups {
   };
 
   @doc("Remove a pending member from a group. Will reject the request from access level 'user'")
-  @route("/groups/{id}/pendingMembers/{memberId}")
+  @route("/groups/{id}/pendingMembers/{pendingId}")
   @delete
-  op removePendingMember(id: string, memberId: string): {
+  op removePendingMember(id: string, pendingId: string): {
     @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
