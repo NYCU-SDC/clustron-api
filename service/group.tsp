@@ -64,6 +64,11 @@ namespace Clustron.Groups {
     members: AddMemberRequest[];
   }
 
+  model TransferGroupOwnershipRequest {
+    @doc("The new owner id in UUID format.")
+    identifier: string;
+  }
+
   @doc("Get all groups of the user.")
   @route("/groups")
   @get
@@ -151,6 +156,19 @@ namespace Clustron.Groups {
   ): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Transfer group ownership to another member. Will reject the request from access level 'user'")
+  @route("/groups/{id}/transfer")
+  @post
+  op transferGroupOwnership(
+    id: string,
+    @body body: TransferGroupOwnershipRequest,
+  ): {
+    @statusCode statusCode: 200;
+    @body group: GroupResponse;
   } | {
     @statusCode statusCode: 404;
   };
