@@ -26,7 +26,6 @@ namespace Clustron.Groups {
   model PendingMemberResponse {
     id: uuid;
     userIdentifier: string;
-    groupId: uuid;
     role: Role;
   }
 
