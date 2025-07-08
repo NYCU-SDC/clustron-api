@@ -263,6 +263,120 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Groups.UpdateMemberRequest'
+  /api/groups/{id}/pendingMembers:
+    get:
+      operationId: Groups_getPendingMembers
+      description: Get all pending members of a group. Will reject the request from access level 'user'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PaginatedParams.page'
+        - $ref: '#/components/parameters/PaginatedParams.size'
+        - $ref: '#/components/parameters/PaginatedParams.sort'
+        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - currentPage
+                  - pageSize
+                  - hasNextPage
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Groups.PendingMemberResponse'
+                  totalPages:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  totalItems:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 100
+                  currentPage:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  hasNextPage:
+                    type: boolean
+                    examples:
+                      - true
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+  /api/groups/{id}/pendingMembers/{pendingId}:
+    put:
+      operationId: Groups_updatePendingMember
+      description: Update a pending member's access level.  Will reject the request from access level 'user'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pendingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.PendingMemberResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.UpdateMemberRequest'
+    delete:
+      operationId: Groups_removePendingMember
+      description: Remove a pending member from a group. Will reject the request from access level 'user'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pendingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
   /api/groups/{id}/unarchive:
     post:
       operationId: Groups_unarchiveGroup
@@ -723,6 +837,19 @@ components:
         email:
           $ref: '#/components/schemas/email'
         studentId:
+          type: string
+        role:
+          $ref: '#/components/schemas/Groups.Role'
+    Groups.PendingMemberResponse:
+      type: object
+      required:
+        - id
+        - userIdentifier
+        - role
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        userIdentifier:
           type: string
         role:
           $ref: '#/components/schemas/Groups.Role'
