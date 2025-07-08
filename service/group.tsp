@@ -23,6 +23,12 @@ namespace Clustron.Groups {
     role: Role;
   }
 
+  model PendingMemberResponse {
+    id: uuid;
+    userIdentifier: string;
+    role: Role;
+  }
+
   model AddMembersRequest {
     members: AddMemberRequest[];
   }
@@ -151,6 +157,39 @@ namespace Clustron.Groups {
   ): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Get all pending members of a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/pendingMembers")
+  @get
+  op getPendingMembers(id: string, ...PaginatedParams): {
+    @statusCode statusCode: 200;
+    @body pendingMembers: PaginatedResponse<PendingMemberResponse>;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Update a pending member's access level.  Will reject the request from access level 'user'")
+  @route("/groups/{id}/pendingMembers/{pendingId}")
+  @put
+  op updatePendingMember(
+    id: string,
+    pendingId: string,
+    @body body: UpdateMemberRequest,
+  ): {
+    @statusCode statusCode: 200;
+    @body pendingMember: PendingMemberResponse;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Remove a pending member from a group. Will reject the request from access level 'user'")
+  @route("/groups/{id}/pendingMembers/{pendingId}")
+  @delete
+  op removePendingMember(id: string, pendingId: string): {
+    @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
   };
