@@ -64,6 +64,22 @@ namespace Clustron.Groups {
     };
   }
 
+  model AddMemberError {
+    member: string;
+    role: uuid;
+    message: string;
+  }
+
+  model AddMembersResult {
+    addedSuccessNumber: int32;
+    addedFailureNumber: int32;
+    errors: AddMemberError[];
+  }
+
+  model CreateGroupResponse extends GroupResponse {
+    addedResult: AddMembersResult;
+  }
+
   model CreateGroupRequest {
     title: string;
     description: string;
@@ -105,7 +121,7 @@ namespace Clustron.Groups {
   @post
   op createGroup(@body body: CreateGroupRequest): {
     @statusCode statusCode: 200;
-    @body group: GroupResponse;
+    @body group: CreateGroupResponse;
   } | {
     @statusCode statusCode: 404;
   };
