@@ -74,7 +74,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Groups.GroupResponse'
+                $ref: '#/components/schemas/Groups.CreateGroupResponse'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -736,6 +736,19 @@ components:
         - GROUP_OWNER
         - GROUP_ADMIN
         - USER
+    Groups.AddMemberError:
+      type: object
+      required:
+        - member
+        - role
+        - message
+      properties:
+        member:
+          type: string
+        role:
+          $ref: '#/components/schemas/uuid'
+        message:
+          type: string
     Groups.AddMemberRequest:
       type: object
       required:
@@ -760,6 +773,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Groups.AddMemberRequest'
+    Groups.AddMembersResult:
+      type: object
+      required:
+        - addedSuccessNumber
+        - addedFailureNumber
+        - errors
+      properties:
+        addedSuccessNumber:
+          type: integer
+          format: int32
+        addedFailureNumber:
+          type: integer
+          format: int32
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups.AddMemberError'
     Groups.CreateGroupRequest:
       type: object
       required:
@@ -775,6 +805,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Groups.AddMemberRequest'
+    Groups.CreateGroupResponse:
+      type: object
+      required:
+        - addedResult
+      properties:
+        addedResult:
+          $ref: '#/components/schemas/Groups.AddMembersResult'
+      allOf:
+        - $ref: '#/components/schemas/Groups.GroupResponse'
     Groups.GroupResponse:
       type: object
       required:
