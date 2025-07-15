@@ -937,10 +937,10 @@ components:
     User.OnboardingRequest:
       type: object
       required:
-        - username
+        - fullName
         - linuxUsername
       properties:
-        username:
+        fullName:
           type: string
           description: The real name of the user.
         linuxUsername:
