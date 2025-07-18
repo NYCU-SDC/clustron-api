@@ -77,7 +77,6 @@ namespace Clustron.Groups {
     id: uuid;
     title: string;
     description: string;
-    links: LinkResponse[];
     isArchived: boolean;
     createdAt: string;
     updatedAt: string;
@@ -90,6 +89,10 @@ namespace Clustron.Groups {
       @doc("The admin user is not a member of the group.")
       type: "adminOverride";
     };
+  }
+
+  model GroupResponseWithLinks extends GroupResponse {
+    links: LinkResponse[];
   }
 
   model AddMemberError {
@@ -135,7 +138,7 @@ namespace Clustron.Groups {
   @get
   op getGroupById(id: string): {
     @statusCode statusCode: 200;
-    @body group: GroupResponse;
+    @body group: GroupResponseWithLinks;
   } | {
     @statusCode statusCode: 404;
   };
