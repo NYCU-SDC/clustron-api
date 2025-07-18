@@ -256,4 +256,37 @@ namespace Clustron.Groups {
   } | {
     @statusCode statusCode: 404;
   };
+
+  @doc("Create a link for a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/link")
+  @post
+  op createGroupLink(id: string, @body body: CreateLinkRequest): {
+    @statusCode statusCode: 200;
+    @body link: LinkResponse;
+  } | {
+    @statusCode statusCode: 400;
+  };
+
+  @doc("Update a link for a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/link/{linkId}")
+  @put
+  op updateGroupLink(
+    id: string,
+    linkId: string,
+    @body body: UpdateLinkRequest,
+  ): {
+    @statusCode statusCode: 200;
+    @body link: LinkResponse;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Delete a link for a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/link/{linkId}")
+  @delete
+  op deleteGroupLink(id: string, linkId: string): {
+    @statusCode statusCode: 200;
+  } | {
+    @statusCode statusCode: 404;
+  };
 }
