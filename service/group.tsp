@@ -46,10 +46,38 @@ namespace Clustron.Groups {
     roleId: uuid;
   }
 
+  model LinkResponse {
+    @doc("The ID of the link.")
+    id: uuid;
+
+    @doc("The title of the link.")
+    title: string;
+
+    @doc("The URL of the link.")
+    url: string;
+  }
+
+  model CreateLinkRequest {
+    @doc("The title of the link.")
+    title: string;
+
+    @doc("The URL of the link.")
+    url: string;
+  }
+
+  model UpdateLinkRequest {
+    @doc("The title of the link.")
+    title: string;
+
+    @doc("The URL of the link.")
+    url: string;
+  }
+
   model GroupResponse {
     id: uuid;
     title: string;
     description: string;
+    links: LinkResponse[];
     isArchived: boolean;
     createdAt: string;
     updatedAt: string;
@@ -83,7 +111,8 @@ namespace Clustron.Groups {
   model CreateGroupRequest {
     title: string;
     description: string;
-    members: AddMemberRequest[];
+    members?: AddMemberRequest[];
+    links?: CreateLinkRequest[];
   }
 
   model TransferGroupOwnershipRequest {
@@ -181,7 +210,7 @@ namespace Clustron.Groups {
   } | {
     @statusCode statusCode: 404;
   };
-  
+
   @doc("Transfer group ownership to another member. Will reject the request from access level 'user'")
   @route("/groups/{id}/transfer")
   @post
@@ -194,7 +223,7 @@ namespace Clustron.Groups {
   } | {
     @statusCode statusCode: 404;
   };
-    
+
   @doc("Get all pending members of a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/pendingMembers")
   @get
