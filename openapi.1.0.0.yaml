@@ -101,7 +101,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Groups.GroupResponse'
+                $ref: '#/components/schemas/Groups.GroupResponseWithLinks'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -112,6 +112,86 @@ paths:
       description: Archive a group. Will reject the request from access level 'user', 'group-admin'.
       parameters:
         - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+  /api/groups/{id}/link:
+    post:
+      operationId: Groups_createGroupLink
+      description: Create a link for a group. Will reject the request from access level 'user'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.LinkResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.CreateLinkRequest'
+  /api/groups/{id}/link/{linkId}:
+    put:
+      operationId: Groups_updateGroupLink
+      description: Update a link for a group. Will reject the request from access level 'user'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: linkId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.LinkResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.UpdateLinkRequest'
+    delete:
+      operationId: Groups_deleteGroupLink
+      description: Delete a link for a group. Will reject the request from access level 'user'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: linkId
           in: path
           required: true
           schema:
@@ -377,6 +457,33 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Group
+  /api/groups/{id}/transfer:
+    post:
+      operationId: Groups_transferGroupOwnership
+      description: Transfer group ownership to another member. Will reject the request from access level 'user'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.TransferGroupOwnershipRequest'
   /api/groups/{id}/unarchive:
     post:
       operationId: Groups_unarchiveGroup
@@ -795,7 +902,6 @@ components:
       required:
         - title
         - description
-        - members
       properties:
         title:
           type: string
@@ -805,6 +911,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Groups.AddMemberRequest'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups.CreateLinkRequest'
     Groups.CreateGroupResponse:
       type: object
       required:
@@ -814,6 +924,18 @@ components:
           $ref: '#/components/schemas/Groups.AddMembersResult'
       allOf:
         - $ref: '#/components/schemas/Groups.GroupResponse'
+    Groups.CreateLinkRequest:
+      type: object
+      required:
+        - title
+        - url
+      properties:
+        title:
+          type: string
+          description: The title of the link.
+        url:
+          type: string
+          description: The URL of the link.
     Groups.GroupResponse:
       type: object
       required:
@@ -860,6 +982,34 @@ components:
                   description: The admin user is not a member of the group.
               required:
                 - type
+    Groups.GroupResponseWithLinks:
+      type: object
+      required:
+        - links
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups.LinkResponse'
+      allOf:
+        - $ref: '#/components/schemas/Groups.GroupResponse'
+    Groups.LinkResponse:
+      type: object
+      required:
+        - id
+        - title
+        - url
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          description: The ID of the link.
+        title:
+          type: string
+          description: The title of the link.
+        url:
+          type: string
+          description: The URL of the link.
     Groups.MemberResponse:
       type: object
       required:
@@ -905,6 +1055,26 @@ components:
           type: string
         accessLevel:
           $ref: '#/components/schemas/Groups.AccessLevel'
+    Groups.TransferGroupOwnershipRequest:
+      type: object
+      required:
+        - identifier
+      properties:
+        identifier:
+          type: string
+          description: The new owner id in UUID format.
+    Groups.UpdateLinkRequest:
+      type: object
+      required:
+        - title
+        - url
+      properties:
+        title:
+          type: string
+          description: The title of the link.
+        url:
+          type: string
+          description: The URL of the link.
     Groups.UpdateMemberRequest:
       type: object
       required:
