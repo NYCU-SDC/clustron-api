@@ -46,6 +46,33 @@ namespace Clustron.Groups {
     roleId: uuid;
   }
 
+  model LinkResponse {
+    @doc("The ID of the link.")
+    id: uuid;
+
+    @doc("The title of the link.")
+    title: string;
+
+    @doc("The URL of the link.")
+    url: string;
+  }
+
+  model CreateLinkRequest {
+    @doc("The title of the link.")
+    title: string;
+
+    @doc("The URL of the link.")
+    url: string;
+  }
+
+  model UpdateLinkRequest {
+    @doc("The title of the link.")
+    title: string;
+
+    @doc("The URL of the link.")
+    url: string;
+  }
+
   model GroupResponse {
     id: uuid;
     title: string;
@@ -62,6 +89,10 @@ namespace Clustron.Groups {
       @doc("The admin user is not a member of the group.")
       type: "adminOverride";
     };
+  }
+
+  model GroupResponseWithLinks extends GroupResponse {
+    links: LinkResponse[];
   }
 
   model AddMemberError {
@@ -83,7 +114,8 @@ namespace Clustron.Groups {
   model CreateGroupRequest {
     title: string;
     description: string;
-    members: AddMemberRequest[];
+    members?: AddMemberRequest[];
+    links?: CreateLinkRequest[];
   }
 
   model TransferGroupOwnershipRequest {
@@ -106,7 +138,7 @@ namespace Clustron.Groups {
   @get
   op getGroupById(id: string): {
     @statusCode statusCode: 200;
-    @body group: GroupResponse;
+    @body group: GroupResponseWithLinks;
   } | {
     @statusCode statusCode: 404;
   };
@@ -181,7 +213,7 @@ namespace Clustron.Groups {
   } | {
     @statusCode statusCode: 404;
   };
-  
+
   @doc("Transfer group ownership to another member. Will reject the request from access level 'user'")
   @route("/groups/{id}/transfer")
   @post
@@ -194,7 +226,7 @@ namespace Clustron.Groups {
   } | {
     @statusCode statusCode: 404;
   };
-    
+
   @doc("Get all pending members of a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/pendingMembers")
   @get
@@ -223,6 +255,39 @@ namespace Clustron.Groups {
   @route("/groups/{id}/pendingMembers/{pendingId}")
   @delete
   op removePendingMember(id: string, pendingId: string): {
+    @statusCode statusCode: 200;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Create a link for a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/link")
+  @post
+  op createGroupLink(id: string, @body body: CreateLinkRequest): {
+    @statusCode statusCode: 200;
+    @body link: LinkResponse;
+  } | {
+    @statusCode statusCode: 400;
+  };
+
+  @doc("Update a link for a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/link/{linkId}")
+  @put
+  op updateGroupLink(
+    id: string,
+    linkId: string,
+    @body body: UpdateLinkRequest,
+  ): {
+    @statusCode statusCode: 200;
+    @body link: LinkResponse;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Delete a link for a group. Will reject the request from access level 'user'.")
+  @route("/groups/{id}/link/{linkId}")
+  @delete
+  op deleteGroupLink(id: string, linkId: string): {
     @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
