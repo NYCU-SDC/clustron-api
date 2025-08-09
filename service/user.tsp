@@ -12,6 +12,25 @@ namespace Clustron.User {
     linuxUsername: string;
   }
 
+  model LoginMethod {
+    @doc("The oauth provider of this login method.")
+    provider: "GOOGLE" | "NYCU";
+
+    @doc("The email of this oauth login method.")
+    email: string;
+  }
+
+  model SettingsResponse {
+    @doc("The real name of the user.")
+    fullName: string;
+
+    @doc("The computer account name of the user.")
+    linuxUsername: string;
+
+    @doc("The login methods of the user.")
+    boundLoginMethods: LoginMethod[];
+  }
+
   model PublicKey {
     @doc("The public key id in UUID format.")
     id: string;
@@ -48,7 +67,7 @@ namespace Clustron.User {
   @get
   op getUserSettings(): {
     @statusCode statusCode: 200;
-    @body settings: Settings;
+    @body settings: SettingsResponse;
   } | {
     @statusCode statusCode: 404;
   };
