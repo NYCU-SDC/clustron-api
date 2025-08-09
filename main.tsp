@@ -4,6 +4,7 @@ import "./service/group.tsp";
 import "./service/user.tsp";
 import "./service/auth.tsp";
 import "./service/admin.tsp";
+import "./service/job.tsp";
 
 using Http;
 using Versioning;
