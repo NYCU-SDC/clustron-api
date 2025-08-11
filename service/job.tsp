@@ -51,6 +51,7 @@ namespace Clustron.Job {
         @statusCode statusCode: 404;
     };
 
+    @doc("Count jobs by status.")
     @route("/jobs/counts")
     @get
     op countJobs(
@@ -75,5 +76,16 @@ namespace Clustron.Job {
         };
     } | {
         @statusCode statusCode: 400;
+    };
+
+    @doc("Get available partitions.")
+    @route("/jobs/partitions")
+    op getPartitions(): {
+        @statusCode statusCode: 200;
+        @body response: {
+            partitions: string[];
+        };
+    } | {
+        @statusCode statusCode: 404;
     };
 }
