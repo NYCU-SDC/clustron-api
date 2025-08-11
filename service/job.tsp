@@ -50,4 +50,30 @@ namespace Clustron.Job {
     } | {
         @statusCode statusCode: 404;
     };
+
+    @route("/jobs/counts")
+    @get
+    op countJobs(
+        @doc("The status of jobs to count. If not provided, counts all statuses.")
+        @query
+        status?:
+            | "RUNNING"
+            | "PENDING"
+            | "COMPLETED"
+            | "FAILED"
+            | "TIMEOUT"
+            | "CANCELLED",
+    ): {
+        @statusCode statusCode: 200;
+        @body response: {
+            running: numeric;
+            pending: numeric;
+            completed: numeric;
+            failed: numeric;
+            timeout: numeric;
+            cancelled: numeric;
+        };
+    } | {
+        @statusCode statusCode: 400;
+    };
 }
