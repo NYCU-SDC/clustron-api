@@ -8,6 +8,37 @@ tags:
   - name: Auth
   - name: Admin
 paths:
+  /api/bind/oauth/{provider}:
+    post:
+      operationId: Auth_bindOAuth
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          description: The OAuth2 provider to bind.
+          schema:
+            $ref: '#/components/schemas/Auth.OAuthProviders'
+        - name: c
+          in: query
+          required: true
+          description: The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)
+          schema:
+            type: string
+          explode: false
+        - name: r
+          in: query
+          required: false
+          description: The redirect URL for login callback.
+          schema:
+            type: string
+          explode: false
+      responses:
+        '302':
+          description: Redirection
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Auth
   /api/groups:
     get:
       operationId: Groups_getGroups
