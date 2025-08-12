@@ -60,4 +60,24 @@ namespace Clustron.Auth {
   } | {
     @statusCode statusCode: 404;
   };
+
+  @route("/bind/oauth/{provider}")
+  @post
+  op bindOAuth(
+    @doc("The OAuth2 provider to bind.")
+    @path
+    provider: OAuthProviders,
+
+    @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
+    @query
+    c: string,
+
+    @doc("The redirect URL for login callback.")
+    @query
+    r?: string,
+  ): {
+    @statusCode statusCode: 302;
+  } | {
+    @statusCode statusCode: 404;
+  };
 }
