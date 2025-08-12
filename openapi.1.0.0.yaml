@@ -772,7 +772,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User.Settings'
+                $ref: '#/components/schemas/User.SettingsResponse'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -1135,6 +1135,21 @@ components:
         id:
           type: string
           description: The public key id in UUID format.
+    User.LoginMethod:
+      type: object
+      required:
+        - provider
+        - email
+      properties:
+        provider:
+          type: string
+          enum:
+            - GOOGLE
+            - NYCU
+          description: The oauth provider of this login method.
+        email:
+          type: string
+          description: The email of this oauth login method.
     User.OnboardingRequest:
       type: object
       required:
@@ -1175,6 +1190,24 @@ components:
         linuxUsername:
           type: string
           description: The computer account name of the user.
+    User.SettingsResponse:
+      type: object
+      required:
+        - fullName
+        - linuxUsername
+        - boundLoginMethods
+      properties:
+        fullName:
+          type: string
+          description: The real name of the user.
+        linuxUsername:
+          type: string
+          description: The computer account name of the user.
+        boundLoginMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/User.LoginMethod'
+          description: The login methods of the user.
     Versions:
       type: string
       enum:
