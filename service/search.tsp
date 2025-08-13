@@ -7,12 +7,14 @@ namespace Clustron.Search {
         identifier: string;
     }
 
+    @doc("Search for users by a query string with prefix search.")
     @route("/searchUser")
     @get
     op searchUser(
         @doc("The search query string used to match facts and references.")
         @query
         query: string,
+
         ...PaginatedParams,
     ): {
         @statusCode statusCode: 200;
