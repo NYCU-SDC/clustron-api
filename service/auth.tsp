@@ -62,7 +62,7 @@ namespace Clustron.Auth {
   };
 
   @route("/bind/oauth/{provider}")
-  @post
+  @get
   op bindOAuth(
     @doc("The OAuth2 provider to bind.")
     @path
