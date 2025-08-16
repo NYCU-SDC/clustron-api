@@ -20,6 +20,11 @@ namespace Clustron.Auth {
     refreshToken: string;
   }
 
+  model BindLoginInfoResponse {
+    @doc("OAuth url")
+    url: string;
+  }
+
   @route("/login/oauth/{provider}")
   @get
   op loginGoogle(
@@ -62,7 +67,7 @@ namespace Clustron.Auth {
   };
 
   @route("/bind/oauth/{provider}")
-  @get
+  @post
   op bindOAuth(
     @doc("The OAuth2 provider to bind.")
     @path
@@ -76,7 +81,8 @@ namespace Clustron.Auth {
     @query
     r?: string,
   ): {
-    @statusCode statusCode: 302;
+    @statusCode statusCode: 200;
+    @body url: BindLoginInfoResponse;
   } | {
     @statusCode statusCode: 404;
   };
