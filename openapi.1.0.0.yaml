@@ -7,6 +7,7 @@ tags:
   - name: User
   - name: Auth
   - name: Admin
+  - name: Job
 paths:
   /api/bind/oauth/{provider}:
     post:
@@ -33,8 +34,12 @@ paths:
             type: string
           explode: false
       responses:
-        '302':
-          description: Redirection
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth.BindLoginInfoResponse'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -532,6 +537,136 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Group
+  /api/jobs:
+    get:
+      operationId: Job_listJobs
+      parameters:
+        - $ref: '#/components/parameters/PaginatedParams.page'
+        - $ref: '#/components/parameters/PaginatedParams.size'
+        - $ref: '#/components/parameters/PaginatedParams.sort'
+        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+        - $ref: '#/components/parameters/Job.FilterParams.filterBy'
+        - $ref: '#/components/parameters/Job.FilterParams.filterValue'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - currentPage
+                  - pageSize
+                  - hasNextPage
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job.JobResponse'
+                  totalPages:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  totalItems:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 100
+                  currentPage:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  hasNextPage:
+                    type: boolean
+                    examples:
+                      - true
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Job
+  /api/jobs/counts:
+    get:
+      operationId: Job_countJobs
+      description: Count jobs by status.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: The status of jobs to count. If not provided, counts all statuses.
+          schema:
+            type: string
+            enum:
+              - RUNNING
+              - PENDING
+              - COMPLETED
+              - FAILED
+              - TIMEOUT
+              - CANCELLED
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running:
+                    type: number
+                  pending:
+                    type: number
+                  completed:
+                    type: number
+                  failed:
+                    type: number
+                  timeout:
+                    type: number
+                  cancelled:
+                    type: number
+                required:
+                  - running
+                  - pending
+                  - completed
+                  - failed
+                  - timeout
+                  - cancelled
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - Job
+  /api/jobs/partitions:
+    get:
+      operationId: Job_getPartitions
+      description: Get available partitions.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  partitions:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - partitions
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Job
   /api/login/oauth/{provider}:
     get:
       operationId: Auth_loginGoogle
@@ -799,6 +934,22 @@ paths:
               $ref: '#/components/schemas/User.Settings'
 components:
   parameters:
+    Job.FilterParams.filterBy:
+      name: filterBy
+      in: query
+      required: false
+      description: The column to filter by.
+      schema:
+        type: string
+      explode: false
+    Job.FilterParams.filterValue:
+      name: filterValue
+      in: query
+      required: false
+      description: The value to filter by.
+      schema:
+        type: string
+      explode: false
     PaginatedParams.page:
       name: page
       in: query
@@ -847,6 +998,14 @@ components:
         accessLevel:
           type: string
           description: The access level of the role.
+    Auth.BindLoginInfoResponse:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: OAuth url
     Auth.OAuthProviders:
       type: string
       enum:
@@ -1115,6 +1274,49 @@ components:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The role id of the member.
+    Job.JobResponse:
+      type: object
+      required:
+        - id
+        - name
+        - comment
+        - status
+        - user
+        - partition
+        - resources
+      properties:
+        id:
+          type: number
+          description: The ID of the job.
+        name:
+          type: string
+          description: The name of the job.
+        comment:
+          type: string
+          description: The description of the job.
+        status:
+          type: string
+          description: The status of the job.
+        user:
+          type: string
+          description: The computer user who created the job.
+        partition:
+          type: string
+          description: The partition the job belongs to.
+        resources:
+          type: object
+          properties:
+            cpu:
+              type: number
+            memory:
+              type: number
+            gpu:
+              type: number
+          required:
+            - cpu
+            - memory
+            - gpu
+          description: The resources allocated for the job.
     User.AddPublicKeyRequest:
       type: object
       required:
