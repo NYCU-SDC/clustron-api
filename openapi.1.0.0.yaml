@@ -8,6 +8,7 @@ tags:
   - name: Auth
   - name: Admin
   - name: Job
+  - name: Search
 paths:
   /api/bind/oauth/{provider}:
     post:
@@ -897,6 +898,67 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Admin.CreateRoleRequest'
+  /api/searchUser:
+    get:
+      operationId: Search_searchUser
+      description: Search for users by a query string with prefix search.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: The search query string used to match facts and references.
+          schema:
+            type: string
+          explode: false
+        - $ref: '#/components/parameters/PaginatedParams.page'
+        - $ref: '#/components/parameters/PaginatedParams.size'
+        - $ref: '#/components/parameters/PaginatedParams.sort'
+        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - currentPage
+                  - pageSize
+                  - hasNextPage
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Search.SearchUserResponse'
+                  totalPages:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  totalItems:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 100
+                  currentPage:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  hasNextPage:
+                    type: boolean
+                    examples:
+                      - true
+      tags:
+        - Search
   /api/settings:
     get:
       operationId: User_getUserSettings
@@ -1317,6 +1379,14 @@ components:
             - memory
             - gpu
           description: The resources allocated for the job.
+    Search.SearchUserResponse:
+      type: object
+      required:
+        - identifier
+      properties:
+        identifier:
+          type: string
+          description: student ID or email address
     User.AddPublicKeyRequest:
       type: object
       required:
