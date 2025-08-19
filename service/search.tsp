@@ -4,6 +4,7 @@ using Http;
 @tag("Search")
 namespace Clustron.Search {
     model SearchUserResponse {
+        @doc("student ID or email address")
         identifier: string;
     }
 
