@@ -15,6 +15,26 @@ namespace Clustron.Job {
     filterValue?: string;
   }
 
+  model JobRequest {
+    name: string;
+    comment?: string;
+    current_working_directory: string;
+    script: string;
+    environment: string[];
+    nodes: string;
+    minimum_nodes: numeric;
+    maximum_nodes: numeric;
+    tasks: numeric;
+    cpus_per_task: numeric;
+    memory_per_cpu: numeric;
+    memory_per_node: numeric;
+    partition: string;
+    time_limit: numeric;
+    standard_input: string;
+    standard_output: string;
+    standard_error: string;
+  }
+
   model JobResponse {
     @doc("The ID of the job.")
     id: numeric;
@@ -41,6 +61,18 @@ namespace Clustron.Job {
       gpu: numeric;
     };
   }
+
+  @route("/jobs")
+  @post
+  op submitJob(
+    @body
+    job: JobRequest,
+  ): {
+    @statusCode statusCode: 201;
+    @body response: JobResponse;
+  } | {
+    @statusCode statusCode: 400;
+  };
 
   @route("/jobs")
   @get
