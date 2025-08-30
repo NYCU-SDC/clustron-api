@@ -15,6 +15,7 @@ namespace Clustron.Job {
     filterValue?: string;
   }
 
+  @doc("View [detail design document](https://clustron.atlassian.net/wiki/spaces/cd/pages/60358660/Slurm+Job+API+design) for more information.")
   model JobRequest {
     name: string;
     comment?: string;
