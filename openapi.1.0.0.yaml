@@ -539,6 +539,26 @@ paths:
       tags:
         - Group
   /api/jobs:
+    post:
+      operationId: Job_submitJob
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job.JobResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - Job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job.JobRequest'
     get:
       operationId: Job_listJobs
       parameters:
@@ -1336,6 +1356,63 @@ components:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The role id of the member.
+    Job.JobRequest:
+      type: object
+      required:
+        - name
+        - current_working_directory
+        - script
+        - environment
+        - nodes
+        - minimum_nodes
+        - maximum_nodes
+        - tasks
+        - cpus_per_task
+        - memory_per_cpu
+        - memory_per_node
+        - partition
+        - time_limit
+        - standard_input
+        - standard_output
+        - standard_error
+      properties:
+        name:
+          type: string
+        comment:
+          type: string
+        current_working_directory:
+          type: string
+        script:
+          type: string
+        environment:
+          type: array
+          items:
+            type: string
+        nodes:
+          type: string
+        minimum_nodes:
+          type: number
+        maximum_nodes:
+          type: number
+        tasks:
+          type: number
+        cpus_per_task:
+          type: number
+        memory_per_cpu:
+          type: number
+        memory_per_node:
+          type: number
+        partition:
+          type: string
+        time_limit:
+          type: number
+        standard_input:
+          type: string
+        standard_output:
+          type: string
+        standard_error:
+          type: string
+      description: View [detail design document](https://clustron.atlassian.net/wiki/spaces/cd/pages/60358660/Slurm+Job+API+design) for more information.
     Job.JobResponse:
       type: object
       required:
