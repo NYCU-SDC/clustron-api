@@ -6,6 +6,7 @@ import "./service/auth.tsp";
 import "./service/admin.tsp";
 import "./service/job.tsp";
 import "./service/search.tsp";
+import "./service/module.tsp";
 
 using Http;
 using Versioning;
