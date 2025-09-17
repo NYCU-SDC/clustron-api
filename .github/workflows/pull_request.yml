@@ -1,0 +1,29 @@
+name: Pull Request Style and Compile Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  style-and-compile-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Install dependencies
+        run: |
+          npm install -g @typespec/compiler
+          tsp install
+
+      - name: Style check
+        run: |
+          tsp format --check "**/*.tsp"
+
+      - name: Compile
+        run: |
+          tsp compile .
