@@ -9,6 +9,7 @@ tags:
   - name: Admin
   - name: Job
   - name: Search
+  - name: Module
 paths:
   /api/bind/oauth/{provider}:
     post:
@@ -730,6 +731,108 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Auth
+  /api/modules:
+    get:
+      operationId: Module_listModules
+      description: list the user's module
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Module.ModuleResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Module
+    post:
+      operationId: Module_createModule
+      description: create module
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module.ModuleResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - Module
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Module.CreateModuleRequest'
+  /api/modules/{id}:
+    get:
+      operationId: Module_getModule
+      description: get a module by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module.ModuleResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Module
+    put:
+      operationId: Module_updateModule
+      description: update module by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module.ModuleResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Module
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Module.CreateModuleRequest'
+    delete:
+      operationId: Module_deleteModule
+      description: delete module by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Module
   /api/onboarding:
     post:
       operationId: User_onboardUser
@@ -1456,6 +1559,51 @@ components:
             - memory
             - gpu
           description: The resources allocated for the job.
+    Module.CreateModuleRequest:
+      type: object
+      required:
+        - title
+        - environment
+      properties:
+        title:
+          type: string
+        environment:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+            required:
+              - key
+              - value
+          description: the environment variables for the module
+    Module.ModuleResponse:
+      type: object
+      required:
+        - id
+        - title
+        - environment
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        environment:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+            required:
+              - key
+              - value
+          description: the environment variables for the module
     Search.SearchUserResponse:
       type: object
       required:
