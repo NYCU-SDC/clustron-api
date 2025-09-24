@@ -666,29 +666,6 @@ paths:
           description: The server could not understand the request due to invalid syntax.
       tags:
         - Job
-  /api/jobs/partitions:
-    get:
-      operationId: Job_getPartitions
-      description: Get available partitions.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  partitions:
-                    type: array
-                    items:
-                      type: string
-                required:
-                  - partitions
-        '404':
-          description: The server cannot find the requested resource.
-      tags:
-        - Job
   /api/login/oauth/{provider}:
     get:
       operationId: Auth_loginGoogle
@@ -850,6 +827,29 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User.OnboardingRequest'
+  /api/partitions:
+    get:
+      operationId: Job_getPartitions
+      description: Get available partitions.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  partitions:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - partitions
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Job
   /api/publickey:
     get:
       operationId: User_getPublicKey
