@@ -112,7 +112,7 @@ namespace Clustron.Job {
   };
 
   @doc("Get available partitions.")
-  @route("/jobs/partitions")
+  @route("/partitions")
   op getPartitions(): {
     @statusCode statusCode: 200;
     @body response: {
