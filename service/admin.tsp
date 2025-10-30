@@ -6,9 +6,11 @@ using Http;
 namespace Clustron.Admin {
   model CreateRoleRequest {
     @doc("The name of the role.")
+    @example("project-member")
     role: string;
 
     @doc("The access level of the role.")
+    @example("USER")
     accessLevel: string;
   }
 

@@ -5,6 +5,7 @@ using Http;
 namespace Clustron.Search {
   model SearchUserResponse {
     @doc("student ID or email address")
+    @example("R12345678")
     identifier: string;
   }
 
@@ -14,6 +15,7 @@ namespace Clustron.Search {
   op searchUser(
     @doc("The search query string used to match facts and references.")
     @query
+    @example("ali")
     query: string,
 
     ...PaginatedParams,
