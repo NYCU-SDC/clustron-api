@@ -25,7 +25,7 @@ namespace Clustron.Auth {
 
   model BindLoginInfoResponse {
     @doc("OAuth url")
-    @example("https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_uri=https://example.com/callback")
+    @example("/api/bind/oauth/google?http://localhost:8080/callback/bind")
     url: string;
   }
 
@@ -38,12 +38,12 @@ namespace Clustron.Auth {
 
     @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
     @query
-    @example("https://example.com/callback")
+    @example("http://localhost:8080/callback")
     c: string,
 
     @doc("The redirect URL for login callback.")
     @query
-    @example("https://example.com/welcome")
+    @example("http://localhost:8080/")
     r?: string,
   ): {
     @statusCode statusCode: 302;
@@ -82,12 +82,12 @@ namespace Clustron.Auth {
 
     @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
     @query
-    @example("https://example.com/callback")
+    @example("http://localhost:8080/callback")
     c: string,
 
     @doc("The redirect URL for login callback.")
     @query
-    @example("https://example.com/welcome")
+    @example("http://localhost:8080/")
     r?: string,
   ): {
     @statusCode statusCode: 200;
