@@ -10,8 +10,8 @@ namespace Clustron.Admin {
     role: string;
 
     @doc("The access level of the role.")
-    @example("USER")
-    accessLevel: string;
+    @example(Clustron.Groups.AccessLevel.User)
+    accessLevel: Clustron.Groups.AccessLevel;
   }
 
   @doc("get all mapping between group wise role and group wise access level")
