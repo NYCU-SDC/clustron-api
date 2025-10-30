@@ -96,7 +96,7 @@ namespace Clustron.Groups {
     title: string;
 
     @doc("The URL of the link.")
-    @example("https://wiki.university.edu/lab-resources")
+    @example("https://example.com")
     url: string;
   }
 
@@ -106,7 +106,7 @@ namespace Clustron.Groups {
     title: string;
 
     @doc("The URL of the link.")
-    @example("https://wiki.university.edu/lab-resources-v2")
+    @example("https://example.com")
     url: string;
   }
 
@@ -199,12 +199,7 @@ namespace Clustron.Groups {
     ])
     members?: AddMemberRequest[];
 
-    @example(#[
-      #{
-        title: "Lab Resources",
-        url: "https://wiki.university.edu/lab-resources",
-      }
-    ])
+    @example(#[#{ title: "Lab Resources", url: "https://example.com" }])
     links?: CreateLinkRequest[];
   }
 

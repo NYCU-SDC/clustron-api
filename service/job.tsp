@@ -23,23 +23,27 @@ namespace Clustron.Job {
     @example("My test job for experiments")
     comment?: string;
 
-    @example("/home/alice/project")
+    @example("/home/<user>")
     current_working_directory: string;
 
-    @example("#!/bin/bash\necho hello")
+    @example("#!/bin/bash\nhostname\necho a\n")
     script: string;
 
-    @example(#["ENV=production", "LD_LIBRARY_PATH=/opt/lib"])
+    @example(#[
+      "HOME=/home/<user>",
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin",
+      "SHELL=/bin/bash"
+    ])
     environment: string[];
 
     @example("node[1-2]")
-    nodes: string;
+    nodes?: string;
 
     @example(1)
-    minimum_nodes: numeric;
+    minimum_nodes?: numeric;
 
     @example(2)
-    maximum_nodes: numeric;
+    maximum_nodes?: numeric;
 
     @example(4)
     tasks: numeric;
@@ -53,20 +57,20 @@ namespace Clustron.Job {
     @example(8192)
     memory_per_node: numeric;
 
-    @example("short")
+    @example("debug")
     partition: string;
 
     @example(3600)
     time_limit: numeric;
 
     @example("/dev/null")
-    standard_input: string;
+    standard_input?: string;
 
     @example("job.out")
-    standard_output: string;
+    standard_output?: string;
 
     @example("job.err")
-    standard_error: string;
+    standard_error?: string;
   }
 
   model JobResponse {
