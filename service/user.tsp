@@ -63,6 +63,13 @@ namespace Clustron.User {
     linuxUsername: string;
   }
 
+  @error 
+  @doc("User already onboarded or field validation failed.")
+  model OnboardingBadRequest {
+    @statusCode
+    statusCode: 400;
+  }
+
   @route("/settings")
   @get
   op getUserSettings(): {
@@ -99,9 +106,7 @@ namespace Clustron.User {
   op addPublicKey(@body body: AddPublicKeyRequest): {
     @statusCode statusCode: 200;
     @body publicKey: PublicKey;
-  } | {
-    @statusCode statusCode: 404;
-  };
+  } | Error.ValidationProblem;
 
   @route("/publickey")
   @delete
@@ -109,15 +114,16 @@ namespace Clustron.User {
     @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
-  };
+  } | Error.ValidationProblem;
 
   @route("/onboarding")
   @post
-  op onboardUser(@body body: OnboardingRequest): {
-    @statusCode statusCode: 200;
-  } | {
-    @doc("User already onboarded.")
-    @statusCode
-    statusCode: 400;
-  };
+  op onboardUser(@body body: OnboardingRequest):
+    | {
+        @statusCode statusCode: 200;
+      }
+    | OnboardingBadRequest
+    | {
+        @statusCode statusCode: 403;
+      };
 }

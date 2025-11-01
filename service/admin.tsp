@@ -41,7 +41,7 @@ namespace Clustron.Admin {
     @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 403;
-  };
+  } | Error.InvalidUuidFormatProblem;
 
   @doc("update mapping between group wise role and group wise access level")
   @route("/roles/{id}")

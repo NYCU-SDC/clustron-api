@@ -56,7 +56,7 @@ namespace Clustron.Auth {
     @body refreshToken: RefreshToken;
   } | {
     @statusCode statusCode: 404;
-  };
+  } | Error.InvalidUuidFormatProblem;
 
   @route("/logout")
   @post
