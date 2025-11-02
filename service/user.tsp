@@ -63,7 +63,7 @@ namespace Clustron.User {
     linuxUsername: string;
   }
 
-  @error 
+  @error
   @doc("User already onboarded or field validation failed.")
   model OnboardingBadRequest {
     @statusCode
@@ -118,12 +118,9 @@ namespace Clustron.User {
 
   @route("/onboarding")
   @post
-  op onboardUser(@body body: OnboardingRequest):
-    | {
-        @statusCode statusCode: 200;
-      }
-    | OnboardingBadRequest
-    | {
-        @statusCode statusCode: 403;
-      };
+  op onboardUser(@body body: OnboardingRequest): {
+    @statusCode statusCode: 200;
+  } | OnboardingBadRequest | {
+    @statusCode statusCode: 403;
+  };
 }
