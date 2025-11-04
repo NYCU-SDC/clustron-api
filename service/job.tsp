@@ -130,7 +130,7 @@ namespace Clustron.Job {
     @body response: PaginatedResponse<JobResponse>;
   } | {
     @statusCode statusCode: 404;
-  };
+  } | Error.InvalidPaginationParametersProblem;
 
   @doc("Count jobs by status.")
   @route("/jobs/counts")

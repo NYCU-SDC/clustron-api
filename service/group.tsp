@@ -1,4 +1,5 @@
 import "@typespec/http";
+import "./error.tsp";
 using Http;
 
 @tag("Group")
@@ -217,7 +218,7 @@ namespace Clustron.Groups {
     @body groups: PaginatedResponse<GroupResponse>;
   } | {
     @statusCode statusCode: 404;
-  };
+  } | Error.InvalidPaginationParametersProblem;
 
   @doc("Get a group by id.")
   @route("/groups/{id}")
@@ -247,7 +248,7 @@ namespace Clustron.Groups {
     @body group: CreateGroupResponse;
   } | {
     @statusCode statusCode: 404;
-  };
+  } | Error.ValidationProblem;
 
   @doc("Archive a group. Will reject the request from access level 'user', 'group-admin'.")
   @route("/groups/{id}/archive")
