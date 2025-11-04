@@ -1180,9 +1180,14 @@ components:
         role:
           type: string
           description: The name of the role.
+          examples:
+            - project-member
         accessLevel:
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Groups.AccessLevel'
           description: The access level of the role.
+          examples:
+            - USER
     Auth.BindLoginInfoResponse:
       type: object
       required:
@@ -1191,6 +1196,8 @@ components:
         url:
           type: string
           description: OAuth url
+          examples:
+            - /api/bind/oauth/google?http://localhost:8080/callback/bind
     Auth.OAuthProviders:
       type: string
       enum:
@@ -1206,12 +1213,18 @@ components:
         accessToken:
           type: string
           description: The new JWT
+          examples:
+            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         expirationTime:
           type: integer
           description: The expiration date of the refresh token.
+          examples:
+            - 1700000000
         refreshToken:
           type: string
           description: The new refresh token.
+          examples:
+            - rftk_1234567890abcdef
     Groups.AccessLevel:
       type: string
       enum:
@@ -1227,10 +1240,17 @@ components:
       properties:
         member:
           type: string
+          examples:
+            - bob@university.edu
         role:
-          $ref: '#/components/schemas/uuid'
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
         message:
           type: string
+          examples:
+            - User not found
     Groups.AddMemberRequest:
       type: object
       required:
@@ -1242,10 +1262,14 @@ components:
             - $ref: '#/components/schemas/email'
             - type: string
           description: The email or student id of the user.
+          examples:
+            - bob@university.edu
         roleId:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The role id of the member.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
     Groups.AddMembersRequest:
       type: object
       required:
@@ -1265,13 +1289,21 @@ components:
         addedSuccessNumber:
           type: integer
           format: int32
+          examples:
+            - 3
         addedFailureNumber:
           type: integer
           format: int32
+          examples:
+            - 1
         errors:
           type: array
           items:
             $ref: '#/components/schemas/Groups.AddMemberError'
+          examples:
+            - - member: bob@university.edu
+                role: 123e4567-e89b-12d3-a456-426614174000
+                message: User not found
     Groups.CreateGroupRequest:
       type: object
       required:
@@ -1280,23 +1312,38 @@ components:
       properties:
         title:
           type: string
+          examples:
+            - Distributed Systems Project
         description:
           type: string
+          examples:
+            - Group for the distributed systems course project.
         members:
           type: array
           items:
             $ref: '#/components/schemas/Groups.AddMemberRequest'
+          examples:
+            - - member: alice@university.edu
+                roleId: 123e4567-e89b-12d3-a456-426614174000
         links:
           type: array
           items:
             $ref: '#/components/schemas/Groups.CreateLinkRequest'
+          examples:
+            - - title: Lab Resources
+                url: https://example.com
     Groups.CreateGroupResponse:
       type: object
       required:
         - addedResult
       properties:
         addedResult:
-          $ref: '#/components/schemas/Groups.AddMembersResult'
+          allOf:
+            - $ref: '#/components/schemas/Groups.AddMembersResult'
+          examples:
+            - addedSuccessNumber: 2
+              addedFailureNumber: 0
+              errors: []
       allOf:
         - $ref: '#/components/schemas/Groups.GroupResponse'
     Groups.CreateLinkRequest:
@@ -1308,9 +1355,13 @@ components:
         title:
           type: string
           description: The title of the link.
+          examples:
+            - Lab Resources
         url:
           type: string
           description: The URL of the link.
+          examples:
+            - https://example.com
     Groups.GroupResponse:
       type: object
       required:
@@ -1323,17 +1374,30 @@ components:
         - me
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174100
         title:
           type: string
+          examples:
+            - GPU Research Group
         description:
           type: string
+          examples:
+            - Group for GPU research and experiments.
         isArchived:
           type: boolean
+          examples:
+            - false
         createdAt:
           type: string
+          examples:
+            - '2024-01-01T12:00:00Z'
         updatedAt:
           type: string
+          examples:
+            - '2024-10-01T12:00:00Z'
         me:
           anyOf:
             - type: object
@@ -1366,6 +1430,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Groups.LinkResponse'
+          examples:
+            - - id: 123e4567-e89b-12d3-a456-426614174010
+                title: Lab Resources
+                url: https://wiki.university.edu/lab-resources
       allOf:
         - $ref: '#/components/schemas/Groups.GroupResponse'
     Groups.LinkResponse:
@@ -1379,12 +1447,18 @@ components:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The ID of the link.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174010
         title:
           type: string
           description: The title of the link.
+          examples:
+            - Lab Resources
         url:
           type: string
           description: The URL of the link.
+          examples:
+            - https://wiki.university.edu/lab-resources
     Groups.MemberResponse:
       type: object
       required:
@@ -1395,15 +1469,30 @@ components:
         - role
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174001
         fullName:
           type: string
+          examples:
+            - Alice Chen
         email:
-          $ref: '#/components/schemas/email'
+          allOf:
+            - $ref: '#/components/schemas/email'
+          examples:
+            - alice@university.edu
         studentId:
           type: string
+          examples:
+            - R12345678
         role:
-          $ref: '#/components/schemas/Groups.Role'
+          allOf:
+            - $ref: '#/components/schemas/Groups.Role'
+          examples:
+            - id: 123e4567-e89b-12d3-a456-426614174000
+              roleName: Member
+              accessLevel: USER
     Groups.PendingMemberResponse:
       type: object
       required:
@@ -1412,11 +1501,21 @@ components:
         - role
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174002
         userIdentifier:
           type: string
+          examples:
+            - applicant@example.edu
         role:
-          $ref: '#/components/schemas/Groups.Role'
+          allOf:
+            - $ref: '#/components/schemas/Groups.Role'
+          examples:
+            - id: 123e4567-e89b-12d3-a456-426614174000
+              roleName: Member
+              accessLevel: USER
     Groups.Role:
       type: object
       required:
@@ -1425,11 +1524,19 @@ components:
         - accessLevel
       properties:
         id:
-          $ref: '#/components/schemas/uuid'
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
         roleName:
           type: string
+          examples:
+            - Member
         accessLevel:
-          $ref: '#/components/schemas/Groups.AccessLevel'
+          allOf:
+            - $ref: '#/components/schemas/Groups.AccessLevel'
+          examples:
+            - USER
     Groups.TransferGroupOwnershipRequest:
       type: object
       required:
@@ -1438,6 +1545,8 @@ components:
         identifier:
           type: string
           description: The new owner id in UUID format.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174200
     Groups.UpdateLinkRequest:
       type: object
       required:
@@ -1447,9 +1556,13 @@ components:
         title:
           type: string
           description: The title of the link.
+          examples:
+            - Updated Lab Resources
         url:
           type: string
           description: The URL of the link.
+          examples:
+            - https://example.com
     Groups.UpdateMemberRequest:
       type: object
       required:
@@ -1459,6 +1572,8 @@ components:
           allOf:
             - $ref: '#/components/schemas/uuid'
           description: The role id of the member.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
     Job.JobRequest:
       type: object
       required:
@@ -1466,55 +1581,88 @@ components:
         - current_working_directory
         - script
         - environment
-        - nodes
-        - minimum_nodes
-        - maximum_nodes
         - tasks
         - cpus_per_task
         - memory_per_cpu
         - memory_per_node
         - partition
         - time_limit
-        - standard_input
-        - standard_output
-        - standard_error
       properties:
         name:
           type: string
+          examples:
+            - test-job
         comment:
           type: string
+          examples:
+            - My test job for experiments
         current_working_directory:
           type: string
+          examples:
+            - /home/<user>
         script:
           type: string
+          examples:
+            - |
+              #!/bin/bash
+              hostname
+              echo a
         environment:
           type: array
           items:
             type: string
+          examples:
+            - - HOME=/home/<user>
+              - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin
+              - SHELL=/bin/bash
         nodes:
           type: string
+          examples:
+            - node[1-2]
         minimum_nodes:
           type: number
+          examples:
+            - 1
         maximum_nodes:
           type: number
+          examples:
+            - 2
         tasks:
           type: number
+          examples:
+            - 4
         cpus_per_task:
           type: number
+          examples:
+            - 2
         memory_per_cpu:
           type: number
+          examples:
+            - 4096
         memory_per_node:
           type: number
+          examples:
+            - 8192
         partition:
           type: string
+          examples:
+            - debug
         time_limit:
           type: number
+          examples:
+            - 3600
         standard_input:
           type: string
+          examples:
+            - /dev/null
         standard_output:
           type: string
+          examples:
+            - job.out
         standard_error:
           type: string
+          examples:
+            - job.err
       description: View [detail design document](https://clustron.atlassian.net/wiki/spaces/cd/pages/60358660/Slurm+Job+API+design) for more information.
     Job.JobResponse:
       type: object
@@ -1530,30 +1678,48 @@ components:
         id:
           type: number
           description: The ID of the job.
+          examples:
+            - 12345
         name:
           type: string
           description: The name of the job.
+          examples:
+            - test-job
         comment:
           type: string
           description: The description of the job.
+          examples:
+            - My test job for experiments
         status:
           type: string
           description: The status of the job.
+          examples:
+            - RUNNING
         user:
           type: string
           description: The computer user who created the job.
+          examples:
+            - alice
         partition:
           type: string
           description: The partition the job belongs to.
+          examples:
+            - short
         resources:
           type: object
           properties:
             cpu:
               type: number
+              examples:
+                - 8
             memory:
               type: number
+              examples:
+                - 32768
             gpu:
               type: number
+              examples:
+                - 0
           required:
             - cpu
             - memory
@@ -1567,6 +1733,8 @@ components:
       properties:
         title:
           type: string
+          examples:
+            - CUDA 11.8
         environment:
           type: array
           items:
@@ -1580,6 +1748,9 @@ components:
               - key
               - value
           description: the environment variables for the module
+          examples:
+            - - key: PATH
+                value: /usr/local/cuda/bin
     Module.ModuleResponse:
       type: object
       required:
@@ -1589,8 +1760,12 @@ components:
       properties:
         id:
           type: string
+          examples:
+            - mod-123456
         title:
           type: string
+          examples:
+            - CUDA 11.8
         environment:
           type: array
           items:
@@ -1604,6 +1779,9 @@ components:
               - key
               - value
           description: the environment variables for the module
+          examples:
+            - - key: PATH
+                value: /usr/local/cuda/bin
     Search.SearchUserResponse:
       type: object
       required:
@@ -1612,6 +1790,8 @@ components:
         identifier:
           type: string
           description: student ID or email address
+          examples:
+            - R12345678
     User.AddPublicKeyRequest:
       type: object
       required:
@@ -1621,9 +1801,13 @@ components:
         title:
           type: string
           description: The public key title set by the user.
+          examples:
+            - workstation-key
         publicKey:
           type: string
           description: The public key of the user.
+          examples:
+            - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3...
     User.DeletePublicKeyRequest:
       type: object
       required:
@@ -1632,6 +1816,8 @@ components:
         id:
           type: string
           description: The public key id in UUID format.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174300
     User.LoginMethod:
       type: object
       required:
@@ -1644,9 +1830,13 @@ components:
             - GOOGLE
             - NYCU
           description: The oauth provider of this login method.
+          examples:
+            - GOOGLE
         email:
           type: string
           description: The email of this oauth login method.
+          examples:
+            - alice@university.edu
     User.OnboardingRequest:
       type: object
       required:
@@ -1656,9 +1846,13 @@ components:
         fullName:
           type: string
           description: The real name of the user.
+          examples:
+            - Alice Chen
         linuxUsername:
           type: string
           description: The computer account name of the user.
+          examples:
+            - alice
     User.PublicKey:
       type: object
       required:
@@ -1669,12 +1863,18 @@ components:
         id:
           type: string
           description: The public key id in UUID format.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174300
         title:
           type: string
           description: The public key title set by the user.
+          examples:
+            - workstation-key
         publicKey:
           type: string
           description: The public key of the user.
+          examples:
+            - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3...
     User.Settings:
       type: object
       required:
@@ -1684,9 +1884,13 @@ components:
         fullName:
           type: string
           description: The real name of the user.
+          examples:
+            - Alice Chen
         linuxUsername:
           type: string
           description: The computer account name of the user.
+          examples:
+            - alice
     User.SettingsResponse:
       type: object
       required:
@@ -1697,14 +1901,21 @@ components:
         fullName:
           type: string
           description: The real name of the user.
+          examples:
+            - Alice Chen
         linuxUsername:
           type: string
           description: The computer account name of the user.
+          examples:
+            - alice
         boundLoginMethods:
           type: array
           items:
             $ref: '#/components/schemas/User.LoginMethod'
           description: The login methods of the user.
+          examples:
+            - - provider: GOOGLE
+                email: alice@university.edu
     Versions:
       type: string
       enum:
