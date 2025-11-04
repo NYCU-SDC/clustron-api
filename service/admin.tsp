@@ -6,7 +6,7 @@ using Http;
 namespace Clustron.Admin {
   model CreateRoleRequest {
     @doc("The name of the role.")
-    role: string;
+    roleName: string;
 
     @doc("The access level of the role.")
     accessLevel: string;
