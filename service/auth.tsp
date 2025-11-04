@@ -11,17 +11,21 @@ namespace Clustron.Auth {
 
   model RefreshToken {
     @doc("The new JWT")
+    @example("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     accessToken: string;
 
     @doc("The expiration date of the refresh token.")
+    @example(1700000000)
     expirationTime: integer;
 
     @doc("The new refresh token.")
+    @example("rftk_1234567890abcdef")
     refreshToken: string;
   }
 
   model BindLoginInfoResponse {
     @doc("OAuth url")
+    @example("/api/bind/oauth/google?http://localhost:8080/callback/bind")
     url: string;
   }
 
@@ -34,10 +38,12 @@ namespace Clustron.Auth {
 
     @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
     @query
+    @example("http://localhost:8080/callback")
     c: string,
 
     @doc("The redirect URL for login callback.")
     @query
+    @example("http://localhost:8080/")
     r?: string,
   ): {
     @statusCode statusCode: 302;
@@ -50,6 +56,7 @@ namespace Clustron.Auth {
   op refreshToken(
     @doc("The refresh token to use for refreshing the access token.")
     @path
+    @example("rftk_1234567890abcdef")
     refreshToken: string,
   ): {
     @statusCode statusCode: 200;
@@ -75,10 +82,12 @@ namespace Clustron.Auth {
 
     @doc("The callback URL of the OAuth2 login. [See details](https://clustron.atlassian.net/wiki/spaces/cd/pages/18219016/Backend+OAuth+JWT+Manual)")
     @query
+    @example("http://localhost:8080/callback")
     c: string,
 
     @doc("The redirect URL for login callback.")
     @query
+    @example("http://localhost:8080/")
     r?: string,
   ): {
     @statusCode statusCode: 200;

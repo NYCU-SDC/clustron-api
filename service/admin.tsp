@@ -6,10 +6,12 @@ using Http;
 namespace Clustron.Admin {
   model CreateRoleRequest {
     @doc("The name of the role.")
+    @example("project-member")
     role: string;
 
     @doc("The access level of the role.")
-    accessLevel: string;
+    @example(Clustron.Groups.AccessLevel.User)
+    accessLevel: Clustron.Groups.AccessLevel;
   }
 
   @doc("get all mapping between group wise role and group wise access level")

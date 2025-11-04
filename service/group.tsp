@@ -10,22 +10,49 @@ namespace Clustron.Groups {
   }
 
   model Role {
+    @example("123e4567-e89b-12d3-a456-426614174000")
     id: uuid;
+
+    @example("Member")
     roleName: string;
+
+    @example(AccessLevel.User)
     accessLevel: AccessLevel;
   }
 
   model MemberResponse {
+    @example("123e4567-e89b-12d3-a456-426614174001")
     id: uuid;
+
+    @example("Alice Chen")
     fullName: string;
+
+    @example("alice@university.edu")
     email: email;
+
+    @example("R12345678")
     studentId: string;
+
+    @example(#{
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      roleName: "Member",
+      accessLevel: AccessLevel.User,
+    })
     role: Role;
   }
 
   model PendingMemberResponse {
+    @example("123e4567-e89b-12d3-a456-426614174002")
     id: uuid;
+
+    @example("applicant@example.edu")
     userIdentifier: string;
+
+    @example(#{
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      roleName: "Member",
+      accessLevel: AccessLevel.User,
+    })
     role: Role;
   }
 
@@ -35,51 +62,73 @@ namespace Clustron.Groups {
 
   model AddMemberRequest {
     @doc("The email or student id of the user.")
+    @example("bob@university.edu")
     member: email | string;
 
     @doc("The role id of the member.")
+    @example("123e4567-e89b-12d3-a456-426614174000")
     roleId: uuid;
   }
 
   model UpdateMemberRequest {
     @doc("The role id of the member.")
+    @example("123e4567-e89b-12d3-a456-426614174000")
     roleId: uuid;
   }
 
   model LinkResponse {
     @doc("The ID of the link.")
+    @example("123e4567-e89b-12d3-a456-426614174010")
     id: uuid;
 
     @doc("The title of the link.")
+    @example("Lab Resources")
     title: string;
 
     @doc("The URL of the link.")
+    @example("https://wiki.university.edu/lab-resources")
     url: string;
   }
 
   model CreateLinkRequest {
     @doc("The title of the link.")
+    @example("Lab Resources")
     title: string;
 
     @doc("The URL of the link.")
+    @example("https://example.com")
     url: string;
   }
 
   model UpdateLinkRequest {
     @doc("The title of the link.")
+    @example("Updated Lab Resources")
     title: string;
 
     @doc("The URL of the link.")
+    @example("https://example.com")
     url: string;
   }
 
   model GroupResponse {
+    @example("123e4567-e89b-12d3-a456-426614174100")
     id: uuid;
+
+    @example("GPU Research Group")
     title: string;
+
+    @example("Group for GPU research and experiments.")
     description: string;
+
+    @example(false)
     isArchived: boolean;
+
+    @example("2024-01-01T12:00:00Z")
     createdAt: string;
+
+    @example("2024-10-01T12:00:00Z")
     updatedAt: string;
+
     me: {
       @doc("The user is a member of the group.")
       type: "membership";
@@ -92,34 +141,71 @@ namespace Clustron.Groups {
   }
 
   model GroupResponseWithLinks extends GroupResponse {
+    @example(#[
+      #{
+        id: "123e4567-e89b-12d3-a456-426614174010",
+        title: "Lab Resources",
+        url: "https://wiki.university.edu/lab-resources",
+      }
+    ])
     links: LinkResponse[];
   }
 
   model AddMemberError {
+    @example("bob@university.edu")
     member: string;
+
+    @example("123e4567-e89b-12d3-a456-426614174000")
     role: uuid;
+
+    @example("User not found")
     message: string;
   }
 
   model AddMembersResult {
+    @example(3)
     addedSuccessNumber: int32;
+
+    @example(1)
     addedFailureNumber: int32;
+
+    @example(#[
+      #{
+        member: "bob@university.edu",
+        role: "123e4567-e89b-12d3-a456-426614174000",
+        message: "User not found",
+      }
+    ])
     errors: AddMemberError[];
   }
 
   model CreateGroupResponse extends GroupResponse {
+    @example(#{ addedSuccessNumber: 2, addedFailureNumber: 0, errors: #[] })
     addedResult: AddMembersResult;
   }
 
   model CreateGroupRequest {
+    @example("Distributed Systems Project")
     title: string;
+
+    @example("Group for the distributed systems course project.")
     description: string;
+
+    @example(#[
+      #{
+        member: "alice@university.edu",
+        roleId: "123e4567-e89b-12d3-a456-426614174000",
+      }
+    ])
     members?: AddMemberRequest[];
+
+    @example(#[#{ title: "Lab Resources", url: "https://example.com" }])
     links?: CreateLinkRequest[];
   }
 
   model TransferGroupOwnershipRequest {
     @doc("The new owner id in UUID format.")
+    @example("123e4567-e89b-12d3-a456-426614174200")
     identifier: string;
   }
 

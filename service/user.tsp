@@ -6,60 +6,75 @@ using Http;
 namespace Clustron.User {
   model Settings {
     @doc("The real name of the user.")
+    @example("Alice Chen")
     fullName: string;
 
     @doc("The computer account name of the user.")
+    @example("alice")
     linuxUsername: string;
   }
 
   model LoginMethod {
     @doc("The oauth provider of this login method.")
+    @example("GOOGLE")
     provider: "GOOGLE" | "NYCU";
 
     @doc("The email of this oauth login method.")
+    @example("alice@university.edu")
     email: string;
   }
 
   model SettingsResponse {
     @doc("The real name of the user.")
+    @example("Alice Chen")
     fullName: string;
 
     @doc("The computer account name of the user.")
+    @example("alice")
     linuxUsername: string;
 
     @doc("The login methods of the user.")
+    @example(#[#{ provider: "GOOGLE", email: "alice@university.edu" }])
     boundLoginMethods: LoginMethod[];
   }
 
   model PublicKey {
     @doc("The public key id in UUID format.")
+    @example("123e4567-e89b-12d3-a456-426614174300")
     id: string;
 
     @doc("The public key title set by the user.")
+    @example("workstation-key")
     title: string;
 
     @doc("The public key of the user.")
+    @example("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3...")
     publicKey: string;
   }
 
   model AddPublicKeyRequest {
     @doc("The public key title set by the user.")
+    @example("workstation-key")
     title: string;
 
     @doc("The public key of the user.")
+    @example("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3...")
     publicKey: string;
   }
 
   model DeletePublicKeyRequest {
     @doc("The public key id in UUID format.")
+    @example("123e4567-e89b-12d3-a456-426614174300")
     id: string;
   }
 
   model OnboardingRequest {
     @doc("The real name of the user.")
+    @example("Alice Chen")
     fullName: string;
 
     @doc("The computer account name of the user.")
+    @example("alice")
     linuxUsername: string;
   }
 
@@ -86,6 +101,7 @@ namespace Clustron.User {
   op getPublicKey(
     @doc("Get 10 head characters of publickey as short public key in 'publickey' field.")
     @query
+    @example(false)
     short?: boolean,
   ): {
     @statusCode statusCode: 200;

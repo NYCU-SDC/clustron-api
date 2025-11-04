@@ -4,9 +4,11 @@ using Http;
 @tag("Module")
 namespace Clustron.Module {
   model CreateModuleRequest {
+    @example("CUDA 11.8")
     title: string;
 
     @doc("the environment variables for the module")
+    @example(#[#{ key: "PATH", value: "/usr/local/cuda/bin" }])
     environment: {
       key: string;
       value: string;
@@ -14,10 +16,14 @@ namespace Clustron.Module {
   }
 
   model ModuleResponse {
+    @example("mod-123456")
     id: string;
+
+    @example("CUDA 11.8")
     title: string;
 
     @doc("the environment variables for the module")
+    @example(#[#{ key: "PATH", value: "/usr/local/cuda/bin" }])
     environment: {
       key: string;
       value: string;
