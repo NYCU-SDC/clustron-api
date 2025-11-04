@@ -1,3 +1,4 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/NYCU-SDC/clustron-api)
 # Clustron API
 
 This repository contains the TypeSpec API definitions for Clustron.
