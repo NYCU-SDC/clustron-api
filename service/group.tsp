@@ -263,6 +263,7 @@ namespace Clustron.Groups {
   @post
   op unarchiveGroup(id: string): {
     @statusCode statusCode: 200;
+    @body group: GroupResponse;
   } | {
     @statusCode statusCode: 404;
   };
