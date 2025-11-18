@@ -98,6 +98,8 @@ paths:
                     type: boolean
                     examples:
                       - true
+        '400':
+          description: Invalid page, page size, or sorting field.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -113,6 +115,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Groups.CreateGroupResponse'
+        '400':
+          description: Request body field validation failed.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -612,6 +616,8 @@ paths:
                     type: boolean
                     examples:
                       - true
+        '400':
+          description: Invalid page, page size, or sorting field.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -818,7 +824,9 @@ paths:
         '200':
           description: The request has succeeded.
         '400':
-          description: The server could not understand the request due to invalid syntax.
+          description: User already onboarded or field validation failed.
+        '403':
+          description: Access is forbidden.
       tags:
         - User
       requestBody:
@@ -884,8 +892,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User.PublicKey'
-        '404':
-          description: The server cannot find the requested resource.
+        '400':
+          description: Request body field validation failed.
       tags:
         - User
       requestBody:
@@ -900,6 +908,8 @@ paths:
       responses:
         '200':
           description: The request has succeeded.
+        '400':
+          description: Request body field validation failed.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -927,6 +937,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Auth.RefreshToken'
+        '400':
+          description: Invalid UUID format.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -987,6 +999,8 @@ paths:
       responses:
         '200':
           description: The request has succeeded.
+        '400':
+          description: Invalid UUID format.
         '403':
           description: Access is forbidden.
       tags:
@@ -1225,6 +1239,28 @@ components:
           description: The new refresh token.
           examples:
             - rftk_1234567890abcdef
+    Error.ErrorResponse:
+      type: object
+      required:
+        - Title
+        - Status
+        - Type
+        - Detail
+      properties:
+        Title:
+          type: string
+          description: A short, human-readable summary of the problem.
+        Status:
+          type: integer
+          format: int32
+          description: The HTTP status code.
+        Type:
+          type: string
+          description: Reference link for status code.
+        Detail:
+          type: string
+          description: A detailed description of the error.
+      description: Generic error response model.
     Groups.AccessLevel:
       type: string
       enum:
