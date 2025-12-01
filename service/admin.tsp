@@ -4,6 +4,12 @@ using Http;
 
 @tag("Admin")
 namespace Clustron.Admin {
+  enum Role {
+    Admin: "ADMIN", // super admin
+    Organizer: "ORGANIZER", // can create group
+    User: "USER", // normal user
+  }
+
   model CreateRoleRequest {
     @doc("The name of the role.")
     @example("project-member")
@@ -12,6 +18,37 @@ namespace Clustron.Admin {
     @doc("The access level of the role.")
     @example(Clustron.Groups.AccessLevel.User)
     accessLevel: Clustron.Groups.AccessLevel;
+  }
+
+  model UserResponse {
+    @example("123e4567-e89b-12d3-a456-426614174000")
+    id: uuid;
+
+    @example("Alice Chen")
+    fullName: string;
+
+    @example("alice@university.edu")
+    email: email;
+
+    @example("R12345678")
+    studentId: string;
+
+    @example(Role.User)
+    @doc("The website role of the user.")
+    role: Role;
+  }
+
+  model UpdateUserRoleRequest {
+    @doc("The new role of the user.")
+    @example(Role.Organizer)
+    role: Role;
+  }
+
+  model SearchUserParams {
+    @doc("Search term to filter users by name, email or student ID.")
+    @example("alice")
+    @query
+    search?: string;
   }
 
   @doc("get all mapping between group wise role and group wise access level")
@@ -56,4 +93,34 @@ namespace Clustron.Admin {
   } | {
     @statusCode statusCode: 400;
   };
+
+  @doc("get all avaliable global roles")
+  @route("/globalRoles")
+  @get
+  op getAllGlobalRoles(): {
+    @statusCode statusCode: 200;
+    @body roles: Role[];
+  } | {
+    @statusCode statusCode: 403;
+  };
+
+  @doc("get all users")
+  @route("/users")
+  @get
+  op getAllUsers(...PaginatedParams, ...SearchUserParams): {
+    @statusCode statusCode: 200;
+    @body users: PaginatedResponse<UserResponse>;
+  } | {
+    @statusCode statusCode: 403;
+  };
+
+  @doc("update a user's role")
+  @route("/users/{id}/role")
+  @put
+  op updateUserRole(@path id: uuid, @body body: UpdateUserRoleRequest): {
+    @statusCode statusCode: 200;
+    @body user: UserResponse;
+  } | {
+    @statusCode statusCode: 403;
+  } | Error.InvalidUuidFormatProblem;
 }
