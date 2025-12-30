@@ -132,6 +132,24 @@ namespace Clustron.User {
     @statusCode statusCode: 404;
   } | Error.ValidationProblem;
 
+  @route("/publickey/import")
+  @get
+  op importPublicKey(
+    @doc("The callback github oauth and get ssh keys and tokens.")
+    @query
+    @example("http://localhost:8080/callback")
+    c: string,
+
+    @doc("The redirect URL for login callback.")
+    @query
+    @example("http://localhost:8080/")
+    r?: string,
+  ): {
+    @statusCode statusCode: 302;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
   @route("/onboarding")
   @post
   op onboardUser(@body body: OnboardingRequest): {
