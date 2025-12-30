@@ -49,6 +49,11 @@ namespace Clustron.Admin {
     @example("alice")
     @query
     search?: string;
+
+    @doc("Filter users by their global role.")
+    @example(Role.Admin)
+    @query
+    role?: Role;
   }
 
   @doc("get all mapping between group wise role and group wise access level")
@@ -114,8 +119,8 @@ namespace Clustron.Admin {
     @statusCode statusCode: 403;
   };
 
-  @doc("update a user's role")
-  @route("/users/{id}/role")
+  @doc("update a user's global role")
+  @route("/users/{id}/globalRole")
   @put
   op updateUserRole(@path id: uuid, @body body: UpdateUserRoleRequest): {
     @statusCode statusCode: 200;
