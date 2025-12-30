@@ -924,6 +924,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User.DeletePublicKeyRequest'
+  /api/publickey/import:
+    get:
+      operationId: User_importPublicKey
+      parameters:
+        - name: c
+          in: query
+          required: true
+          description: Callback url for requesting GitHub oauth and getting ssh keys and tokens.
+          schema:
+            type: string
+          explode: false
+        - name: r
+          in: query
+          required: false
+          description: The redirect URL for login callback.
+          schema:
+            type: string
+          explode: false
+      responses:
+        '302':
+          description: Redirection
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - User
   /api/refreshToken/{refreshToken}:
     get:
       operationId: Auth_refreshToken
