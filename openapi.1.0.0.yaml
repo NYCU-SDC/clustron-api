@@ -539,6 +539,10 @@ paths:
       responses:
         '200':
           description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.GroupResponse'
         '404':
           description: The server cannot find the requested resource.
       tags:
