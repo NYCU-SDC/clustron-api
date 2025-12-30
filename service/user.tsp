@@ -135,7 +135,7 @@ namespace Clustron.User {
   @route("/publickey/import")
   @get
   op importPublicKey(
-    @doc("The callback github oauth and get ssh keys and tokens.")
+    @doc("Call GitHub oauth and get ssh keys and tokens.")
     @query
     @example("http://localhost:8080/callback")
     c: string,
