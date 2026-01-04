@@ -46,6 +46,24 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Auth
+  /api/globalRoles:
+    get:
+      operationId: Admin_getAllGlobalRoles
+      description: get all avaliable global roles
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Admin.Role'
+        '403':
+          description: Access is forbidden.
+      tags:
+        - Admin
   /api/groups:
     get:
       operationId: Groups_getGroups
@@ -1160,8 +1178,111 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User.Settings'
+  /api/users:
+    get:
+      operationId: Admin_getAllUsers
+      description: get all users
+      parameters:
+        - $ref: '#/components/parameters/PaginatedParams.page'
+        - $ref: '#/components/parameters/PaginatedParams.size'
+        - $ref: '#/components/parameters/PaginatedParams.sort'
+        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+        - $ref: '#/components/parameters/Admin.SearchUserParams.search'
+        - $ref: '#/components/parameters/Admin.SearchUserParams.role'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - currentPage
+                  - pageSize
+                  - hasNextPage
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Admin.UserResponse'
+                  totalPages:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  totalItems:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 100
+                  currentPage:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    examples:
+                      - 10
+                  hasNextPage:
+                    type: boolean
+                    examples:
+                      - true
+        '403':
+          description: Access is forbidden.
+      tags:
+        - Admin
+  /api/users/{id}/globalRole:
+    put:
+      operationId: Admin_updateUserRole
+      description: update a user's global role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin.UserResponse'
+        '400':
+          description: Invalid UUID format.
+        '403':
+          description: Access is forbidden.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin.UpdateUserRoleRequest'
 components:
   parameters:
+    Admin.SearchUserParams.role:
+      name: role
+      in: query
+      required: false
+      description: Filter users by their global role.
+      schema:
+        $ref: '#/components/schemas/Admin.Role'
+      explode: false
+    Admin.SearchUserParams.search:
+      name: search
+      in: query
+      required: false
+      description: Search term to filter users by name, email or student ID.
+      schema:
+        type: string
+      explode: false
     Job.FilterParams.filterBy:
       name: filterBy
       in: query
@@ -1229,6 +1350,56 @@ components:
           allOf:
             - $ref: '#/components/schemas/Groups.AccessLevel'
           description: The access level of the role.
+          examples:
+            - USER
+    Admin.Role:
+      type: string
+      enum:
+        - ADMIN
+        - ORGANIZER
+        - USER
+    Admin.UpdateUserRoleRequest:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          allOf:
+            - $ref: '#/components/schemas/Admin.Role'
+          description: The new role of the user.
+          examples:
+            - ORGANIZER
+    Admin.UserResponse:
+      type: object
+      required:
+        - id
+        - fullName
+        - email
+        - studentId
+        - role
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
+        fullName:
+          type: string
+          examples:
+            - Alice Chen
+        email:
+          allOf:
+            - $ref: '#/components/schemas/email'
+          examples:
+            - alice@university.edu
+        studentId:
+          type: string
+          examples:
+            - R12345678
+        role:
+          allOf:
+            - $ref: '#/components/schemas/Admin.Role'
+          description: The website role of the user.
           examples:
             - USER
     Auth.BindLoginInfoResponse:
