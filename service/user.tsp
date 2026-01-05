@@ -157,4 +157,12 @@ namespace Clustron.User {
   } | OnboardingBadRequest | {
     @statusCode statusCode: 403;
   };
+
+  @route("/password")
+  @put
+  op changePassword(): {
+    @statusCode statusCode: 200;
+  } | {
+    @statusCode statusCode: 400;
+  };
 }
