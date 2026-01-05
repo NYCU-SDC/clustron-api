@@ -76,6 +76,10 @@ namespace Clustron.User {
     @doc("The computer account name of the user.")
     @example("alice")
     linuxUsername: string;
+
+    @doc("The password for the computer account. At least 8 digits, including alphabet and number.")
+    @example("StrongP@ssw0rd!")
+    linuxPassword: string;
   }
 
   @error
