@@ -79,7 +79,7 @@ namespace Clustron.User {
   }
 
   model ChangePasswordRequest {
-    @doc("The new password of the user.")
+    @doc("The new password of the user. At least 8 characters. Include alphabet and number.")
     newPassword: string;
   }
 
