@@ -39,9 +39,9 @@ namespace Clustron.User {
   }
 
   model PublicKey {
-    @doc("The public key id in UUID format.")
-    @example("123e4567-e89b-12d3-a456-426614174300")
-    id: string;
+    @doc("The public key fingerprint.")
+    @example("GP79vI7mQGl6eKR1b/6qfzzRwkGEUlZ2RA/mX8tVtXc")
+    fingerprint: string;
 
     @doc("The public key title set by the user.")
     @example("workstation-key")
@@ -63,9 +63,9 @@ namespace Clustron.User {
   }
 
   model DeletePublicKeyRequest {
-    @doc("The public key id in UUID format.")
-    @example("123e4567-e89b-12d3-a456-426614174300")
-    id: string;
+    @doc("The public key fingerprint.")
+    @example("GP79vI7mQGl6eKR1b/6qfzzRwkGEUlZ2RA/mX8tVtXc")
+    fingerprint: string;
   }
 
   model OnboardingRequest {
