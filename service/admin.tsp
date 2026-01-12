@@ -111,7 +111,7 @@ namespace Clustron.Admin {
 
   model UserPaginatedParams {
     ...OmitProperties<PaginatedParams, "sortBy">;
-    
+
     @query
     sortBy?: "fullName" | "email" | "studentID";
   }
@@ -120,7 +120,6 @@ namespace Clustron.Admin {
   @route("/users")
   @get
   op getAllUsers(...UserPaginatedParams, ...SearchUserParams): {
-
     @statusCode statusCode: 200;
     @body users: PaginatedResponse<UserResponse>;
   } | {
