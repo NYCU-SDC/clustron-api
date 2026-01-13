@@ -10,6 +10,7 @@ tags:
   - name: Job
   - name: Search
   - name: Module
+  - name: Setup
 paths:
   /api/bind/oauth/{provider}:
     post:
@@ -1178,6 +1179,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User.Settings'
+  /api/setup/status:
+    get:
+      operationId: Setup_getSetupStatus
+      description: Get the current setup status of the system. If any of the status is false, the system setup is not complete.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setup.SetupStatus'
+      tags:
+        - Setup
   /api/users:
     get:
       operationId: Admin_getAllUsers
@@ -2028,6 +2043,20 @@ components:
           description: student ID or email address
           examples:
             - R12345678
+    Setup.SetupStatus:
+      type: object
+      required:
+        - progress
+      properties:
+        progress:
+          type: object
+          properties:
+            adminAccountCreated:
+              type: boolean
+              description: Indicates whether there is at least one user in the system.
+          required:
+            - adminAccountCreated
+      description: Indicate whether the system setup is complete.
     User.AddPublicKeyRequest:
       type: object
       required:
