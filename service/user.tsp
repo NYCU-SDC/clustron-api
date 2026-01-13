@@ -135,17 +135,12 @@ namespace Clustron.User {
   @route("/publickey/import")
   @get
   op importPublicKey(
-    @doc("Callback url for requesting GitHub oauth and getting ssh keys and tokens.")
-    @query
-    @example("http://localhost:8080/callback")
-    c: string,
-
     @doc("The redirect URL for login callback.")
     @query
     @example("http://localhost:8080/")
     r?: string,
   ): {
-    @statusCode statusCode: 302;
+    @statusCode statusCode: 200;
   } | {
     @statusCode statusCode: 404;
   };
