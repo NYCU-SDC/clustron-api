@@ -78,6 +78,12 @@ namespace Clustron.User {
     linuxUsername: string;
   }
 
+  model githubLoginURL {
+    @doc("redirect to frontend URL")
+    @example("https://github.com/login/oauth/authorize?access_type=offline&client_id=xxx")
+    redirctURL: string;
+  }
+
   @error
   @doc("User already onboarded or field validation failed.")
   model OnboardingBadRequest {
@@ -141,6 +147,7 @@ namespace Clustron.User {
     r?: string,
   ): {
     @statusCode statusCode: 200;
+    @body redirectURL: githubLoginURL;
   } | {
     @statusCode statusCode: 404;
   };
