@@ -2047,13 +2047,13 @@ components:
     User.DeletePublicKeyRequest:
       type: object
       required:
-        - id
+        - fingerprint
       properties:
-        id:
+        fingerprint:
           type: string
-          description: The public key id in UUID format.
+          description: The public key fingerprint.
           examples:
-            - 123e4567-e89b-12d3-a456-426614174300
+            - GP79vI7mQGl6eKR1b/6qfzzRwkGEUlZ2RA/mX8tVtXc
     User.LoginMethod:
       type: object
       required:
@@ -2092,15 +2092,15 @@ components:
     User.PublicKey:
       type: object
       required:
-        - id
+        - fingerprint
         - title
         - publicKey
       properties:
-        id:
+        fingerprint:
           type: string
-          description: The public key id in UUID format.
+          description: The public key fingerprint.
           examples:
-            - 123e4567-e89b-12d3-a456-426614174300
+            - GP79vI7mQGl6eKR1b/6qfzzRwkGEUlZ2RA/mX8tVtXc
         title:
           type: string
           description: The public key title set by the user.
