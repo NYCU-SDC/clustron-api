@@ -2107,6 +2107,7 @@ components:
       required:
         - fullName
         - linuxUsername
+        - linuxPassword
       properties:
         fullName:
           type: string
@@ -2118,6 +2119,11 @@ components:
           description: The computer account name of the user.
           examples:
             - alice
+        linuxPassword:
+          type: string
+          description: The password for the computer account. At least 8 digits, including alphabet and number.
+          examples:
+            - StrongP@ssw0rd!
     User.PublicKey:
       type: object
       required:
