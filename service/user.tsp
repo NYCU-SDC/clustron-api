@@ -141,7 +141,7 @@ namespace Clustron.User {
   @route("/publickey/import")
   @get
   op importPublicKey(
-    @doc("The redirect URL for login callback.")
+    @doc("The redirect URL after login completed.")
     @query
     @example("http://localhost:8080/")
     r?: string,
