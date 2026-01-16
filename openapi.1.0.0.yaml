@@ -881,6 +881,24 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Job
+  /api/password:
+    put:
+      operationId: User_changePassword
+      description: Change the password of the user.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User.ChangePasswordRequest'
   /api/publickey:
     get:
       operationId: User_getPublicKey
@@ -2084,6 +2102,14 @@ components:
           description: The public key of the user.
           examples:
             - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3...
+    User.ChangePasswordRequest:
+      type: object
+      required:
+        - newPassword
+      properties:
+        newPassword:
+          type: string
+          description: The new password of the user. At least 8 characters. Include alphabet and number.
     User.DeletePublicKeyRequest:
       type: object
       required:
