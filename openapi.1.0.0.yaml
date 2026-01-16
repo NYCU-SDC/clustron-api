@@ -1201,7 +1201,7 @@ paths:
         - $ref: '#/components/parameters/PaginatedParams.page'
         - $ref: '#/components/parameters/PaginatedParams.size'
         - $ref: '#/components/parameters/PaginatedParams.sort'
-        - $ref: '#/components/parameters/PaginatedParams.sortBy'
+        - $ref: '#/components/parameters/Admin.UserPaginatedParams.sortBy'
         - $ref: '#/components/parameters/Admin.SearchUserParams.search'
         - $ref: '#/components/parameters/Admin.SearchUserParams.role'
       responses:
@@ -1297,6 +1297,17 @@ components:
       description: Search term to filter users by name, email or student ID.
       schema:
         type: string
+      explode: false
+    Admin.UserPaginatedParams.sortBy:
+      name: sortBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - fullName
+          - email
+          - studentID
       explode: false
     Job.FilterParams.filterBy:
       name: filterBy
