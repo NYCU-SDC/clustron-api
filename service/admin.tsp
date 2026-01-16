@@ -109,10 +109,17 @@ namespace Clustron.Admin {
     @statusCode statusCode: 403;
   };
 
+  model UserPaginatedParams {
+    ...OmitProperties<PaginatedParams, "sortBy">;
+
+    @query
+    sortBy?: "fullName" | "email" | "studentID";
+  }
+
   @doc("get all users")
   @route("/users")
   @get
-  op getAllUsers(...PaginatedParams, ...SearchUserParams): {
+  op getAllUsers(...UserPaginatedParams, ...SearchUserParams): {
     @statusCode statusCode: 200;
     @body users: PaginatedResponse<UserResponse>;
   } | {
