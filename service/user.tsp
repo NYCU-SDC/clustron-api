@@ -82,6 +82,11 @@ namespace Clustron.User {
     linuxPassword: string;
   }
 
+  model ChangePasswordRequest {
+    @doc("The new password of the user. At least 8 characters. Include alphabet and number.")
+    newPassword: string;
+  }
+
   @error
   @doc("User already onboarded or field validation failed.")
   model OnboardingBadRequest {
@@ -160,5 +165,14 @@ namespace Clustron.User {
     @statusCode statusCode: 200;
   } | OnboardingBadRequest | {
     @statusCode statusCode: 403;
+  };
+
+  @doc("Change the password of the user.")
+  @route("/password")
+  @put
+  op changePassword(@body body: ChangePasswordRequest): {
+    @statusCode statusCode: 200;
+  } | {
+    @statusCode statusCode: 400;
   };
 }
