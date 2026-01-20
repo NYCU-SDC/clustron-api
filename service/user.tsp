@@ -144,7 +144,7 @@ namespace Clustron.User {
     @doc("The redirect URL after login completed.")
     @query
     @example("http://localhost:8080/")
-    r?: string,
+    c?: string,
   ): {
     @statusCode statusCode: 200;
     @body redirectURL: githubLoginURL;
