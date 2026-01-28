@@ -967,21 +967,18 @@ paths:
       parameters:
         - name: c
           in: query
-          required: true
-          description: Callback url for requesting GitHub oauth and getting ssh keys and tokens.
-          schema:
-            type: string
-          explode: false
-        - name: r
-          in: query
           required: false
-          description: The redirect URL for login callback.
+          description: The redirect URL after login completed.
           schema:
             type: string
           explode: false
       responses:
-        '302':
-          description: Redirection
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User.githubLoginURL'
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -2224,6 +2221,16 @@ components:
           examples:
             - - provider: GOOGLE
                 email: alice@university.edu
+    User.githubLoginURL:
+      type: object
+      required:
+        - redirctURL
+      properties:
+        redirctURL:
+          type: string
+          description: redirect to frontend URL
+          examples:
+            - https://github.com/login/oauth/authorize?access_type=offline&client_id=xxx
     Versions:
       type: string
       enum:
