@@ -21,6 +21,36 @@ namespace Clustron.Groups {
     accessLevel: AccessLevel;
   }
 
+  model ListMemberResponse {
+    @example("123e4567-e89b-12d3-a456-426614174001")
+    id: uuid;
+
+    @example("Alice Chen")
+    fullName: string;
+
+    @example("alice@university.edu")
+    email: email;
+
+    @example("R12345678")
+    studentId: string;
+
+    @example(#{
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      roleName: "Member",
+      accessLevel: AccessLevel.User,
+    })
+    role: Role;
+
+    @example(false)
+    onlyInLDAP: boolean;
+
+    @example(10000)
+    uidNumber: int64;
+
+    @example("123")
+    uid: string;
+  }
+
   model MemberResponse {
     @example("123e4567-e89b-12d3-a456-426614174001")
     id: uuid;
@@ -274,7 +304,7 @@ namespace Clustron.Groups {
   @post
   op addMember(id: string, @body body: AddMembersRequest): {
     @statusCode statusCode: 200;
-    @body member: MemberResponse;
+    @body member: ListMemberResponse;
   } | {
     @statusCode statusCode: 404;
   };
