@@ -21,7 +21,7 @@ namespace Clustron.Groups {
     accessLevel: AccessLevel;
   }
 
-  model DetailMemberResponse {
+  model MemberResponse {
     @example("123e4567-e89b-12d3-a456-426614174001")
     id: uuid;
 
@@ -49,27 +49,6 @@ namespace Clustron.Groups {
 
     @example("123")
     uid: string;
-  }
-
-  model MemberResponse {
-    @example("123e4567-e89b-12d3-a456-426614174001")
-    id: uuid;
-
-    @example("Alice Chen")
-    fullName: string;
-
-    @example("alice@university.edu")
-    email: email;
-
-    @example("R12345678")
-    studentId: string;
-
-    @example(#{
-      id: "123e4567-e89b-12d3-a456-426614174000",
-      roleName: "Member",
-      accessLevel: AccessLevel.User,
-    })
-    role: Role;
   }
 
   model PendingMemberResponse {
@@ -265,7 +244,7 @@ namespace Clustron.Groups {
   @get
   op getMembers(id: string, ...PaginatedParams): {
     @statusCode statusCode: 200;
-    @body members: PaginatedResponse<DetailMemberResponse>;
+    @body members: PaginatedResponse<MemberResponse>;
   } | {
     @statusCode statusCode: 404;
   };
