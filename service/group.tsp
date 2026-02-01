@@ -21,7 +21,7 @@ namespace Clustron.Groups {
     accessLevel: AccessLevel;
   }
 
-  model ListMemberResponse {
+  model DetailMemberResponse {
     @example("123e4567-e89b-12d3-a456-426614174001")
     id: uuid;
 
@@ -265,7 +265,7 @@ namespace Clustron.Groups {
   @get
   op getMembers(id: string, ...PaginatedParams): {
     @statusCode statusCode: 200;
-    @body members: PaginatedResponse<MemberResponse>;
+    @body members: PaginatedResponse<DetailMemberResponse>;
   } | {
     @statusCode statusCode: 404;
   };
@@ -304,7 +304,7 @@ namespace Clustron.Groups {
   @post
   op addMember(id: string, @body body: AddMembersRequest): {
     @statusCode statusCode: 200;
-    @body member: ListMemberResponse;
+    @body member: MemberResponse;
   } | {
     @statusCode statusCode: 404;
   };
