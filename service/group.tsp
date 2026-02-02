@@ -40,6 +40,15 @@ namespace Clustron.Groups {
       accessLevel: AccessLevel.User,
     })
     role: Role;
+
+    @example(false)
+    onlyInLDAP: boolean;
+
+    @example(10000)
+    uidNumber: int64;
+
+    @example("123")
+    uid: string;
   }
 
   model PendingMemberResponse {
