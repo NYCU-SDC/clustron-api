@@ -1744,6 +1744,9 @@ components:
         - email
         - studentId
         - role
+        - onlyInLDAP
+        - uidNumber
+        - uid
       properties:
         id:
           allOf:
@@ -1770,6 +1773,19 @@ components:
             - id: 123e4567-e89b-12d3-a456-426614174000
               roleName: Member
               accessLevel: USER
+        onlyInLDAP:
+          type: boolean
+          examples:
+            - false
+        uidNumber:
+          type: integer
+          format: int64
+          examples:
+            - 10000
+        uid:
+          type: string
+          examples:
+            - '123'
     Groups.PendingMemberResponse:
       type: object
       required:
