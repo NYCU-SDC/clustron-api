@@ -340,7 +340,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Groups.MemberResponse'
+                $ref: '#/components/schemas/Groups.AddMembersResult'
+        '400':
+          description: No user are appended. Request failed.
         '404':
           description: The server cannot find the requested resource.
       tags:
