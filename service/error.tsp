@@ -38,11 +38,4 @@ namespace Clustron.Error {
     @statusCode
     statusCode: 400;
   }
-
-  @error
-  @doc("No user are appended. Request failed.")
-  model NoMemberAppendedProblem {
-    @statusCode
-    statusCode: 400;
-  }
 }
