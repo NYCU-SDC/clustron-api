@@ -44,5 +44,5 @@ namespace Clustron.Error {
   model NoMemberAppendedProblem {
     @statusCode
     statusCode: 400;
-  };
+  }
 }
