@@ -173,7 +173,7 @@ namespace Clustron.Groups {
   }
 
   @doc("No user are appended. Request failed.")
-  model BadRequestError is Response<400>;
+  model NoMemberAppendedError is Response<400>;
 
   model AddMembersResult {
     @example(3)
@@ -287,7 +287,7 @@ namespace Clustron.Groups {
   op addMember(id: string, @body body: AddMembersRequest): {
     @statusCode statusCode: 200;
     @body member: MemberResponse;
-  } | BadRequestError | {
+  } | NoMemberAppendedError | {
     @statusCode statusCode: 404;
   };
 
