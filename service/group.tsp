@@ -286,7 +286,7 @@ namespace Clustron.Groups {
   @post
   op addMember(id: string, @body body: AddMembersRequest): {
     @statusCode statusCode: 200;
-    @body member: MemberResponse;
+    @body member: AddMembersResult;
   } | NoMemberAppendedError | {
     @statusCode statusCode: 404;
   };
