@@ -523,7 +523,7 @@ paths:
   /api/groups/{id}/transfer:
     post:
       operationId: Groups_transferGroupOwnership
-      description: Transfer group ownership to another member. Will reject the request from access level 'user'
+      description: Transfer group ownership to another member. Will only accept the request from access level 'owner'.
       parameters:
         - name: id
           in: path
