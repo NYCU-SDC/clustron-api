@@ -314,7 +314,7 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   };
 
-  @doc("Transfer group ownership to another member. Will reject the request from access level 'user'")
+  @doc("Transfer group ownership to another member. Will only accept the request from access level 'owner'.")
   @route("/groups/{id}/transfer")
   @post
   op transferGroupOwnership(
