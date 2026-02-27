@@ -26,7 +26,7 @@ namespace Clustron.Auth {
   model BindLoginInfoResponse {
     @doc("OAuth url")
     @example("/api/bind/oauth/google?http://localhost:8080/callback/bind")
-    url: string;
+    redirectURL: string;
   }
 
   @route("/login/oauth/{provider}")
@@ -91,7 +91,7 @@ namespace Clustron.Auth {
     r?: string,
   ): {
     @statusCode statusCode: 200;
-    @body url: BindLoginInfoResponse;
+    @body redirectURL: BindLoginInfoResponse;
   } | {
     @statusCode statusCode: 404;
   };
