@@ -1448,9 +1448,9 @@ components:
     Auth.BindLoginInfoResponse:
       type: object
       required:
-        - url
+        - redirectURL
       properties:
-        url:
+        redirectURL:
           type: string
           description: OAuth url
           examples:
