@@ -266,7 +266,7 @@ namespace Clustron.Groups {
   @route("/groups/{id}")
   @delete
   op deleteGroup(id: string): {
-    @statusCode statusCode:204;
+    @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 404;
   };
