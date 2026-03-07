@@ -262,6 +262,15 @@ namespace Clustron.Groups {
     @statusCode statusCode: 404;
   } | Error.ValidationProblem;
 
+  @doc("Delete a group. Will only accept the request from access level 'owner'.")
+  @route("/groups/{id}")
+  @delete
+  op deleteGroup(id: string): {
+    @statusCode statusCode: 204;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
   @doc("Archive a group. Will reject the request from access level 'user', 'group-admin'.")
   @route("/groups/{id}/archive")
   @post
@@ -388,7 +397,7 @@ namespace Clustron.Groups {
   @route("/groups/{id}/link/{linkId}")
   @delete
   op deleteGroupLink(id: string, linkId: string): {
-    @statusCode statusCode: 200;
+    @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 404;
   };
