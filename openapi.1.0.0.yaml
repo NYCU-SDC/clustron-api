@@ -167,6 +167,22 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Group
+    delete:
+      operationId: Groups_deleteGroup
+      description: Delete a group. Will only accept the request from access level 'owner'.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
   /api/groups/{id}/archive:
     post:
       operationId: Groups_archiveGroup
@@ -258,8 +274,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: The request has succeeded.
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
         '404':
           description: The server cannot find the requested resource.
       tags:
