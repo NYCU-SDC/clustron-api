@@ -121,10 +121,10 @@ namespace Clustron.User {
   @route("/publickey")
   @get
   op getPublicKey(
-    @doc("Get 10 head characters of publickey as short public key in 'publickey' field.")
+    @doc("Get a specific number of characters from the public key as a short public key in the 'publickey' field. Default to 20 if not specified.")
     @query
-    @example(false)
-    short?: boolean,
+    @example(20)
+    length?: integer,
   ): {
     @statusCode statusCode: 200;
     @body publicKey: PublicKey[];
