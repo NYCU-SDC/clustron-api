@@ -738,7 +738,7 @@ paths:
             type: string
           explode: false
       responses:
-        '302':
+        '307':
           description: Redirection
         '404':
           description: The server cannot find the requested resource.
@@ -921,12 +921,12 @@ paths:
     get:
       operationId: User_getPublicKey
       parameters:
-        - name: short
+        - name: length
           in: query
           required: false
-          description: Get 10 head characters of publickey as short public key in 'publickey' field.
+          description: Get a specific number of characters from the public key as a short public key in the 'publickey' field. Default to 20 if not specified.
           schema:
-            type: boolean
+            type: integer
           explode: false
       responses:
         '200':
