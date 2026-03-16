@@ -46,7 +46,7 @@ namespace Clustron.Auth {
     @example("http://localhost:8080/")
     r?: string,
   ): {
-    @statusCode statusCode: 302;
+    @statusCode statusCode: 307;
   } | {
     @statusCode statusCode: 404;
   };
