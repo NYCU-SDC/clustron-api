@@ -127,6 +127,9 @@ namespace Clustron.Groups {
     @example("GPU Research Group")
     title: string;
 
+    @example("GPU-research-group")
+    ldapGroupName: string;
+
     @example("Group for GPU research and experiments.")
     description: string;
 
@@ -203,6 +206,9 @@ namespace Clustron.Groups {
 
     @example("Group for the distributed systems course project.")
     description: string;
+
+    @example("DS-prj")
+    ldapGroupName: string;
 
     @example(#[
       #{
