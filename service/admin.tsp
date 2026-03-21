@@ -27,6 +27,9 @@ namespace Clustron.Admin {
     @example("Alice Chen")
     fullName: string;
 
+    @example("alice")
+    linuxUsername: string;
+
     @example("alice@university.edu")
     email: email;
 
@@ -54,6 +57,15 @@ namespace Clustron.Admin {
     @example(Role.Admin)
     @query
     role?: Role;
+  }
+
+  model LDAPBindRequest {
+    @doc("The clustron user ID to bind.")
+    userId: uuid;
+
+    @doc("The linux username to bind in LDAP. This linux user must exist in LDAP before binding.")
+    @example("alice")
+    linuxUsername: string;
   }
 
   @doc("get all mapping between group wise role and group wise access level")
@@ -135,4 +147,20 @@ namespace Clustron.Admin {
   } | {
     @statusCode statusCode: 403;
   } | Error.InvalidUuidFormatProblem;
+
+  @doc("bind a user to certain linux user in ldap via their linux username. this linux user must exist in ldap before binding")
+  @route("/users/ldapBind")
+  @put
+  op bindUserToLinuxUserInLDAP(@body body: LDAPBindRequest):
+    | {
+        @statusCode statusCode: 200;
+        @body user: UserResponse;
+      }
+    | {
+        @statusCode statusCode: 400;
+      }
+    | {
+        @statusCode statusCode: 403;
+      }
+    | Error.InvalidUuidFormatProblem;
 }
