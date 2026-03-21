@@ -60,9 +60,6 @@ namespace Clustron.Admin {
   }
 
   model LDAPBindRequest {
-    @doc("The clustron user ID to bind.")
-    userId: uuid;
-
     @doc("The linux username to bind in LDAP. This linux user must exist in LDAP before binding.")
     @example("alice")
     linuxUsername: string;
@@ -149,9 +146,9 @@ namespace Clustron.Admin {
   } | Error.InvalidUuidFormatProblem;
 
   @doc("bind a user to certain linux user in ldap via their linux username. this linux user must exist in ldap before binding")
-  @route("/users/ldapBind")
+  @route("/users/{id}/ldapBind")
   @put
-  op bindUserToLinuxUserInLDAP(@body body: LDAPBindRequest):
+  op bindUserToLinuxUserInLDAP(@path id: uuid, @body body: LDAPBindRequest):
     | {
         @statusCode statusCode: 200;
         @body user: UserResponse;
