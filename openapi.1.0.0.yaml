@@ -1604,6 +1604,7 @@ components:
       required:
         - title
         - description
+        - ldapGroupName
       properties:
         title:
           type: string
@@ -1613,6 +1614,10 @@ components:
           type: string
           examples:
             - Group for the distributed systems course project.
+        ldapGroupName:
+          type: string
+          examples:
+            - DS-prj
         members:
           type: array
           items:
@@ -1662,6 +1667,7 @@ components:
       required:
         - id
         - title
+        - ldapGroupName
         - description
         - isArchived
         - createdAt
@@ -1677,6 +1683,10 @@ components:
           type: string
           examples:
             - GPU Research Group
+        ldapGroupName:
+          type: string
+          examples:
+            - GPU-research-group
         description:
           type: string
           examples:
