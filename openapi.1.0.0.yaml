@@ -1313,6 +1313,35 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Admin.UpdateUserRoleRequest'
+  /api/users/{id}/ldapBind:
+    put:
+      operationId: Admin_bindUserToLinuxUserInLDAP
+      description: bind a user to certain linux user in ldap via their linux username. this linux user must exist in ldap before binding
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin.UserResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '403':
+          description: Access is forbidden.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin.LDAPBindRequest'
 components:
   parameters:
     Admin.SearchUserParams.role:
@@ -1411,6 +1440,16 @@ components:
           description: The access level of the role.
           examples:
             - USER
+    Admin.LDAPBindRequest:
+      type: object
+      required:
+        - linuxUsername
+      properties:
+        linuxUsername:
+          type: string
+          description: The linux username to bind in LDAP. This linux user must exist in LDAP before binding.
+          examples:
+            - alice
     Admin.Role:
       type: string
       enum:
@@ -1433,6 +1472,7 @@ components:
       required:
         - id
         - fullName
+        - linuxUsername
         - email
         - studentId
         - role
@@ -1446,6 +1486,10 @@ components:
           type: string
           examples:
             - Alice Chen
+        linuxUsername:
+          type: string
+          examples:
+            - alice
         email:
           allOf:
             - $ref: '#/components/schemas/email'
