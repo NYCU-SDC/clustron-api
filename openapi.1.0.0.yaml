@@ -2272,18 +2272,12 @@ components:
       type: object
       required:
         - fullName
-        - linuxUsername
       properties:
         fullName:
           type: string
           description: The real name of the user.
           examples:
             - Alice Chen
-        linuxUsername:
-          type: string
-          description: The computer account name of the user.
-          examples:
-            - alice
     User.SettingsResponse:
       type: object
       required:
