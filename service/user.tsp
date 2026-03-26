@@ -8,10 +8,6 @@ namespace Clustron.User {
     @doc("The real name of the user.")
     @example("Alice Chen")
     fullName: string;
-
-    @doc("The computer account name of the user.")
-    @example("alice")
-    linuxUsername: string;
   }
 
   model LoginMethod {
