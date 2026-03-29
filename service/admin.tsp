@@ -145,7 +145,7 @@ namespace Clustron.Admin {
     @statusCode statusCode: 403;
   } | Error.InvalidUuidFormatProblem;
 
-  @doc("bind a user to certain linux user in ldap via their linux username. this linux user must exist in ldap before binding")
+  @doc("Bind a user to certain linux user in ldap via their linux username. This linux user must exist in ldap before binding. This endpoint is not responsible for maintaining relations other than the ldap binding. It might require manual setup in database for all permission to work correctly.")
   @route("/users/{id}/ldapBind")
   @put
   op bindUserToLinuxUserInLDAP(@path id: uuid, @body body: LDAPBindRequest):
