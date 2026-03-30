@@ -8,6 +8,9 @@ namespace Clustron.Groups {
     GroupOwner: "GROUP_OWNER",
     GroupAdmin: "GROUP_ADMIN",
     User: "USER",
+
+    @doc("When the user only exists in LDAP but not in the local database, we will assign them with 'unknown' access level.")
+    Unknown: "UNKNOWN",
   }
 
   model Role {
