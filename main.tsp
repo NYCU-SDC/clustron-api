@@ -12,14 +12,14 @@ import "./service/setup.tsp";
 using Http;
 using Versioning;
 
-@service(#{ title: "Clustron API", version: "1.0.0" })
+@service(#{ title: "Clustron API", version: "1.2.0" })
 @server("https://example.com", "Single server endpoint")
 @versioned(Versions)
 @route("/api")
 namespace Clustron;
 
 enum Versions {
-  v1: "1.0.0",
+  v1: "1.2.0",
 }
 
 @format("uuid")
