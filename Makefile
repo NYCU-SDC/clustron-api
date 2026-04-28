@@ -30,4 +30,4 @@ mock:
 	@docker run --init --rm \
 	    -v $(PWD):/api \
         -p 4010:4010 stoplight/prism:4 \
-        mock -h 0.0.0.0 "/api/tsp-output/schema/openapi.1.0.0.yaml"
+        mock -h 0.0.0.0 "/api/tsp-output/schema/openapi.yaml"
