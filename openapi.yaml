@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Clustron API
-  version: 1.0.0
+  version: 1.2.0
 tags:
   - name: Group
   - name: User
@@ -2317,7 +2317,7 @@ components:
     Versions:
       type: string
       enum:
-        - 1.0.0
+        - 1.2.0
     email:
       type: string
       format: email
