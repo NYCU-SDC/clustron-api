@@ -167,6 +167,18 @@ namespace Clustron.Groups {
     links: LinkResponse[];
   }
 
+  model GroupTitleUpdateRequest {
+    @doc("The new title of the group.")
+    @example("Updated GPU Research Group")
+    title: string;
+  }
+
+  model GroupDescriptionUpdateRequest {
+    @doc("The new description of the group.")
+    @example("Updated group for GPU research and experiments.")
+    description: string;
+  }
+
   model AddMemberError {
     @example("bob@university.edu")
     member: string;
@@ -276,6 +288,29 @@ namespace Clustron.Groups {
   @delete
   op deleteGroup(id: string): {
     @statusCode statusCode: 204;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Update a group's title.")
+  @route("/groups/{id}/title")
+  @patch
+  op patchGroupTitle(id: string, @body body: GroupTitleUpdateRequest): {
+    @statusCode statusCode: 200;
+    @body group: GroupResponse;
+  } | {
+    @statusCode statusCode: 404;
+  };
+
+  @doc("Update a group's description.")
+  @route("/groups/{id}/description")
+  @patch
+  op patchGroupDescription(
+    id: string,
+    @body body: GroupDescriptionUpdateRequest,
+  ): {
+    @statusCode statusCode: 200;
+    @body group: GroupResponse;
   } | {
     @statusCode statusCode: 404;
   };
