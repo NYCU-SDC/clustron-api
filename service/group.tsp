@@ -167,13 +167,13 @@ namespace Clustron.Groups {
     links: LinkResponse[];
   }
 
-  model GroupTitleUpdateRequest {
+  model UpdateGroupTitleRequest {
     @doc("The new title of the group.")
     @example("Updated GPU Research Group")
     title: string;
   }
 
-  model GroupDescriptionUpdateRequest {
+  model UpdateGroupDescriptionRequest {
     @doc("The new description of the group.")
     @example("Updated group for GPU research and experiments.")
     description: string;
@@ -295,7 +295,7 @@ namespace Clustron.Groups {
   @doc("Update a group's title.")
   @route("/groups/{id}/title")
   @patch
-  op patchGroupTitle(id: string, @body body: GroupTitleUpdateRequest): {
+  op patchGroupTitle(id: string, @body body: UpdateGroupTitleRequest): {
     @statusCode statusCode: 200;
     @body group: GroupResponse;
   } | {
@@ -307,7 +307,7 @@ namespace Clustron.Groups {
   @patch
   op patchGroupDescription(
     id: string,
-    @body body: GroupDescriptionUpdateRequest,
+    @body body: UpdateGroupDescriptionRequest,
   ): {
     @statusCode statusCode: 200;
     @body group: GroupResponse;
