@@ -200,6 +200,33 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Group
+  /api/groups/{id}/description:
+    patch:
+      operationId: Groups_patchGroupDescription
+      description: Update a group's description.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.UpdateGroupDescriptionRequest'
   /api/groups/{id}/link:
     post:
       operationId: Groups_createGroupLink
@@ -536,6 +563,33 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Group
+  /api/groups/{id}/title:
+    patch:
+      operationId: Groups_patchGroupTitle
+      description: Update a group's title.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Groups.GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Groups.UpdateGroupTitleRequest'
   /api/groups/{id}/transfer:
     post:
       operationId: Groups_transferGroupOwnership
@@ -1913,6 +1967,22 @@ components:
           description: The new owner id in UUID format.
           examples:
             - 123e4567-e89b-12d3-a456-426614174200
+    Groups.UpdateGroupDescriptionRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: The new description of the group.
+          examples:
+            - Updated group for GPU research and experiments.
+    Groups.UpdateGroupTitleRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The new title of the group.
+          examples:
+            - Updated GPU Research Group
     Groups.UpdateLinkRequest:
       type: object
       required:
