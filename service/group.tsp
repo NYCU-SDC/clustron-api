@@ -266,7 +266,13 @@ namespace Clustron.Groups {
   @doc("Get all members of a group. Will reject the request from access level 'user'.")
   @route("/groups/{id}/members")
   @get
-  op getMembers(id: string, ...PaginatedParams): {
+  op getMembers(
+    id: string,
+    ...PaginatedParams,
+
+    @query
+    search?: string,
+  ): {
     @statusCode statusCode: 200;
     @body members: PaginatedResponse<MemberResponse>;
   } | {
