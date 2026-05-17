@@ -321,6 +321,12 @@ paths:
         - $ref: '#/components/parameters/PaginatedParams.size'
         - $ref: '#/components/parameters/PaginatedParams.sort'
         - $ref: '#/components/parameters/PaginatedParams.sortBy'
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
       responses:
         '200':
           description: The request has succeeded.
