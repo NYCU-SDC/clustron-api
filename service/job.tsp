@@ -77,38 +77,6 @@ namespace Clustron.Job {
     @doc("The ID of the job.")
     @example(12345)
     id: numeric;
-
-    @doc("The name of the job.")
-    @example("test-job")
-    name: string;
-
-    @doc("The description of the job.")
-    @example("My test job for experiments")
-    comment: string;
-
-    @doc("The status of the job.")
-    @example("RUNNING")
-    status: string;
-
-    @doc("The computer user who created the job.")
-    @example("alice")
-    user: string;
-
-    @doc("The partition the job belongs to.")
-    @example("short")
-    partition: string;
-
-    @doc("The resources allocated for the job.")
-    resources: {
-      @example(8)
-      cpu: numeric;
-
-      @example(32768)
-      memory: numeric;
-
-      @example(0)
-      gpu: numeric;
-    };
   }
 
   @route("/jobs")
