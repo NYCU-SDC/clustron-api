@@ -8,6 +8,7 @@ import "./service/job.tsp";
 import "./service/search.tsp";
 import "./service/module.tsp";
 import "./service/setup.tsp";
+import "./service/ansible.tsp";
 
 using Http;
 using Versioning;
