@@ -4,13 +4,12 @@ using Http;
 
 @tag("Ansible")
 namespace Clustron.Ansible {
-
   @doc("The deployment status of the server node.")
   enum ServerStatus {
     Unset: "unset",
     Provisioning: "provisioning",
     Active: "active",
-    Failed: "failed"
+    Failed: "failed",
   }
 
   model AddNodeRequest {
@@ -112,7 +111,10 @@ namespace Clustron.Ansible {
   }
 
   model UpdateAllowedLoginGroupsRequest {
-    @example(#["123e4567-e89b-12d3-a456-426614174000", "987fcdeb-51a2-43d7-9012-345678901234"])
+    @example(#[
+      "123e4567-e89b-12d3-a456-426614174000",
+      "987fcdeb-51a2-43d7-9012-345678901234"
+    ])
     @doc("List of group UUIDs allowed to log in.")
     groupIds: uuid[];
   }
@@ -146,9 +148,7 @@ namespace Clustron.Ansible {
   @doc("Add a new node to the cluster. This is an asynchronous operation. The node status will initially be 'provisioning'. Poll the server status to see when it becomes 'active' or 'failed'.")
   @route("/servers")
   @post
-  op addNode(
-    @body req: AddNodeRequest,
-  ): {
+  op addNode(@body req: AddNodeRequest): {
     @statusCode statusCode: 201;
     @body response: ServerResponse;
   } | {
@@ -177,9 +177,7 @@ namespace Clustron.Ansible {
   @doc("Update the list of groups allowed to log in. Fails if a group lacks a base LDAP group. Triggers a background job to re-render sssd.conf on all nodes.")
   @route("/servers/allowedLoginGroups")
   @put
-  op updateAllowedLoginGroups(
-    @body req: UpdateAllowedLoginGroupsRequest,
-  ): {
+  op updateAllowedLoginGroups(@body req: UpdateAllowedLoginGroupsRequest): {
     @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 400;
@@ -190,7 +188,8 @@ namespace Clustron.Ansible {
   @get
   op getServerById(
     @doc("The UUID of the server to retrieve.")
-    @path server_id: uuid,
+    @path
+    server_id: uuid,
   ): {
     @statusCode statusCode: 200;
     @body response: ServerResponse;
@@ -203,7 +202,8 @@ namespace Clustron.Ansible {
   @delete
   op deleteServer(
     @doc("The UUID of the server to delete.")
-    @path server_id: uuid,
+    @path
+    server_id: uuid,
   ): {
     @statusCode statusCode: 204;
   } | {
@@ -215,7 +215,8 @@ namespace Clustron.Ansible {
   @post
   op resetNode(
     @doc("The UUID of the server to reset.")
-    @path server_id: uuid,
+    @path
+    server_id: uuid,
   ): {
     @statusCode statusCode: 200;
     @body response: ServerResponse;
@@ -228,7 +229,9 @@ namespace Clustron.Ansible {
   @patch
   op updateRole(
     @doc("The UUID of the server.")
-    @path server_id: uuid,
+    @path
+    server_id: uuid,
+
     @body req: UpdateRoleRequest,
   ): {
     @statusCode statusCode: 200;
