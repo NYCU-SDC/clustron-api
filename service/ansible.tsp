@@ -18,7 +18,7 @@ namespace Clustron.Ansible {
     HeadNodes: "head_nodes",
 
     @doc("A standard compute node for running jobs.")
-    ComputeNodes: "compute_nodes"
+    ComputeNodes: "compute_nodes",
   }
 
   model AddNodeRequest {
