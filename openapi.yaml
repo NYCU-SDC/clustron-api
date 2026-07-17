@@ -11,6 +11,7 @@ tags:
   - name: Search
   - name: Module
   - name: Setup
+  - name: Ansible
 paths:
   /api/bind/oauth/{provider}:
     post:
@@ -1237,6 +1238,183 @@ paths:
                       - true
       tags:
         - Search
+  /api/servers:
+    get:
+      operationId: Ansible_listServers
+      description: List all managed servers.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ansible.ServerResponse'
+        '500':
+          description: Server error
+      tags:
+        - Ansible
+    post:
+      operationId: Ansible_addNode
+      description: Add a new node to the cluster. This is an asynchronous operation. The node status will initially be 'provisioning'. Poll the server status to see when it becomes 'active' or 'failed'.
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ansible.ServerResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - Ansible
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ansible.AddNodeRequest'
+  /api/servers/allowedLoginGroups:
+    get:
+      operationId: Ansible_getAllowedLoginGroups
+      description: Get the list of groups allowed to log in to servers.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ansible.AllowedLoginGroupResponse'
+        '500':
+          description: Server error
+      tags:
+        - Ansible
+    put:
+      operationId: Ansible_updateAllowedLoginGroups
+      description: Update the list of groups allowed to log in. Fails if a group lacks a base LDAP group. Triggers a background job to re-render sssd.conf on all nodes.
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+      tags:
+        - Ansible
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ansible.UpdateAllowedLoginGroupsRequest'
+  /api/servers/setup:
+    post:
+      operationId: Ansible_setupAllNodes
+      description: Trigger the setup process for all nodes. This is an asynchronous operation running cluster-wide.
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '500':
+          description: Server error
+      tags:
+        - Ansible
+  /api/servers/{server_id}:
+    get:
+      operationId: Ansible_getServerById
+      description: Get a specific server by its ID.
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          description: The UUID of the server to retrieve.
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ansible.ServerResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Ansible
+    delete:
+      operationId: Ansible_deleteServer
+      description: Delete a server from the cluster.
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          description: The UUID of the server to delete.
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Ansible
+  /api/servers/{server_id}/reset:
+    post:
+      operationId: Ansible_resetNode
+      description: Reset a specific node's configuration/status. Triggers a background Ansible run and resets status to 'provisioning'.
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          description: The UUID of the server to reset.
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ansible.ServerResponse'
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Ansible
+  /api/servers/{server_id}/role:
+    patch:
+      operationId: Ansible_updateRole
+      description: Update the Ansible role of a specific server. This triggers a background Ansible run. Status will be reset to 'provisioning'.
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          description: The UUID of the server.
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ansible.ServerResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Ansible
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ansible.UpdateRoleRequest'
   /api/settings:
     get:
       operationId: User_getUserSettings
@@ -1565,6 +1743,200 @@ components:
           description: The website role of the user.
           examples:
             - USER
+    Ansible.AddNodeRequest:
+      type: object
+      required:
+        - ansible_name
+        - ssh_user
+        - ansible_role
+      properties:
+        ansible_name:
+          type: string
+          minLength: 1
+          description: The Ansible hostname of the node.
+          examples:
+            - node-01
+        ip_address:
+          type: string
+          description: The IP address to connect to. Required if ssh_config_host is not provided.
+          examples:
+            - 192.168.1.100
+        ssh_config_host:
+          type: string
+          description: The SSH config host alias. Required if ip_address is not provided.
+          examples:
+            - my-cluster-node-1
+        private_ip:
+          type: string
+          description: The private IP address of the node.
+          examples:
+            - 10.0.0.5
+        ssh_user:
+          type: string
+          minLength: 1
+          description: The SSH user to connect as.
+          examples:
+            - ubuntu
+        ssh_key_name:
+          type: string
+          description: The name of the SSH key to use for connection.
+          examples:
+            - cluster-key
+        ansible_role:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.AnsibleRole'
+          description: The Ansible role assigned to this node.
+          examples:
+            - compute_nodes
+        slurm_partition:
+          type: string
+          description: The Slurm partition this node belongs to.
+          examples:
+            - batch
+        cpu_cores:
+          type: integer
+          format: int32
+          description: Number of CPU cores.
+          examples:
+            - 32
+        memory_mb:
+          type: integer
+          format: int32
+          description: Amount of memory in MB.
+          examples:
+            - 131072
+    Ansible.AllowedLoginGroupResponse:
+      type: object
+      required:
+        - groupId
+        - title
+        - ldapCn
+      properties:
+        groupId:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          description: The unique identifier of the group.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
+        title:
+          type: string
+          description: The display title of the group.
+          examples:
+            - Administrators
+        ldapCn:
+          type: string
+          description: The LDAP Common Name associated with the group.
+          examples:
+            - cn=admins,ou=groups,dc=example,dc=com
+    Ansible.AnsibleRole:
+      type: string
+      enum:
+        - head_nodes
+        - compute_nodes
+      description: The supported Ansible roles for cluster nodes based on the playbook.
+    Ansible.ServerResponse:
+      type: object
+      required:
+        - id
+        - ansible_name
+        - ssh_user
+        - ansible_role
+        - status
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          description: The unique identifier of the server.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
+        ansible_name:
+          type: string
+          description: The Ansible hostname of the node.
+          examples:
+            - node-01
+        ip_address:
+          type: string
+          examples:
+            - 192.168.1.100
+        ssh_config_host:
+          type: string
+          examples:
+            - my-cluster-node-1
+        private_ip:
+          type: string
+          examples:
+            - 10.0.0.5
+        ssh_user:
+          type: string
+          examples:
+            - ubuntu
+        ssh_key_name:
+          type: string
+          examples:
+            - cluster-key
+        ansible_role:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.AnsibleRole'
+          description: The Ansible role assigned to this node.
+          examples:
+            - compute_nodes
+        slurm_partition:
+          type: string
+          examples:
+            - batch
+        status:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.ServerStatus'
+          description: The current status of the server. Will be 'provisioning' during Ansible execution.
+          examples:
+            - provisioning
+        provision_detail:
+          type: string
+          description: Detailed information about the last provisioning task or error summary.
+          examples:
+            - |-
+              Stage: Install Slurm
+              Error: connection timeout
+        cpu_cores:
+          type: integer
+          format: int32
+          examples:
+            - 32
+        memory_mb:
+          type: integer
+          format: int32
+          examples:
+            - 131072
+    Ansible.ServerStatus:
+      type: string
+      enum:
+        - unset
+        - provisioning
+        - active
+        - failed
+      description: The deployment status of the server node.
+    Ansible.UpdateAllowedLoginGroupsRequest:
+      type: object
+      required:
+        - groupIds
+      properties:
+        groupIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/uuid'
+          description: List of group UUIDs allowed to log in.
+          examples:
+            - - 123e4567-e89b-12d3-a456-426614174000
+              - 987fcdeb-51a2-43d7-9012-345678901234
+    Ansible.UpdateRoleRequest:
+      type: object
+      properties:
+        ansible_role:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.AnsibleRole'
+          description: The new Ansible role to assign.
+          examples:
+            - compute_nodes
     Auth.BindLoginInfoResponse:
       type: object
       required:
