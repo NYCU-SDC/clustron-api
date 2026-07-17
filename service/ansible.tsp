@@ -12,6 +12,15 @@ namespace Clustron.Ansible {
     Failed: "failed",
   }
 
+  @doc("The supported Ansible roles for cluster nodes based on the playbook.")
+  enum AnsibleRole {
+    @doc("The head node of the cluster (NFS, LDAP, Slurm controller).")
+    HeadNodes: "head_nodes",
+
+    @doc("A standard compute node for running jobs.")
+    ComputeNodes: "compute_nodes"
+  }
+
   model AddNodeRequest {
     @example("node-01")
     @doc("The Ansible hostname of the node.")
@@ -39,10 +48,9 @@ namespace Clustron.Ansible {
     @doc("The name of the SSH key to use for connection.")
     ssh_key_name?: string;
 
-    @example("compute_node")
+    @example(AnsibleRole.ComputeNodes)
     @doc("The Ansible role assigned to this node.")
-    @minLength(1)
-    ansible_role: string;
+    ansible_role: AnsibleRole;
 
     @example("batch")
     @doc("The Slurm partition this node belongs to.")
@@ -81,9 +89,9 @@ namespace Clustron.Ansible {
     @example("cluster-key")
     ssh_key_name?: string;
 
-    @example("compute_node")
+    @example(AnsibleRole.ComputeNodes)
     @doc("The Ansible role assigned to this node.")
-    ansible_role: string;
+    ansible_role: AnsibleRole;
 
     @example("batch")
     slurm_partition?: string;
@@ -104,10 +112,9 @@ namespace Clustron.Ansible {
   }
 
   model UpdateRoleRequest {
-    @example("login_node")
+    @example(AnsibleRole.ComputeNodes)
     @doc("The new Ansible role to assign.")
-    @minLength(1)
-    ansible_role: string;
+    ansible_role: AnsibleRole;
   }
 
   model UpdateAllowedLoginGroupsRequest {
