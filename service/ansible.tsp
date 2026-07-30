@@ -1,6 +1,8 @@
 import "@typespec/http";
+import "@typespec/openapi3";
 
 using Http;
+using OpenAPI;
 
 @tag("Ansible")
 namespace Clustron.Ansible {
@@ -21,31 +23,16 @@ namespace Clustron.Ansible {
     ComputeNodes: "compute_nodes",
   }
 
-  model AddNodeRequest {
+  model AddNodeCommonRequest {
     @example("node-01")
     @doc("The Ansible hostname of the node.")
     @minLength(1)
+    @maxLength(253)
     ansible_name: string;
-
-    @example("192.168.1.100")
-    @doc("The IP address to connect to. Required if ssh_config_host is not provided.")
-    ip_address?: string;
-
-    @example("my-cluster-node-1")
-    @doc("The SSH config host alias. Required if ip_address is not provided.")
-    ssh_config_host?: string;
-
-    @example("10.0.0.5")
-    @doc("The private IP address of the node.")
-    private_ip?: string;
-
-    @example("ubuntu")
-    @doc("The SSH user to connect as.")
-    @minLength(1)
-    ssh_user: string;
 
     @example("cluster-key")
     @doc("The name of the SSH key to use for connection.")
+    @maxLength(255)
     ssh_key_name?: string;
 
     @example(AnsibleRole.ComputeNodes)
@@ -54,15 +41,66 @@ namespace Clustron.Ansible {
 
     @example("batch")
     @doc("The Slurm partition this node belongs to.")
+    @maxLength(255)
     slurm_partition?: string;
 
     @example(32)
     @doc("Number of CPU cores.")
+    @minValue(1)
     cpu_cores?: int32;
 
     @example(131072)
     @doc("Amount of memory in MB.")
+    @minValue(1)
     memory_mb?: int32;
+  }
+
+  @doc("A node connected directly by IP address.")
+  model DirectIpAddNodeRequest extends AddNodeCommonRequest {
+    @example("192.168.1.100")
+    @doc("The IP address used to connect to the node.")
+    ip_address: string;
+
+    @example("ubuntu")
+    @doc("The SSH user used to connect to the node.")
+    @minLength(1)
+    @maxLength(255)
+    ssh_user: string;
+
+    @example("my-cluster-node-1")
+    @doc("An optional SSH config host alias.")
+    @maxLength(255)
+    ssh_config_host?: string;
+
+    @example("10.0.0.5")
+    @doc("An optional private IP address used for internal cluster traffic.")
+    private_ip?: string;
+  }
+
+  @doc("A node connected through an SSH config host alias.")
+  model SshConfigAddNodeRequest extends AddNodeCommonRequest {
+    @example("my-cluster-node-1")
+    @doc("The SSH config host alias used to connect to the node.")
+    @minLength(1)
+    @maxLength(255)
+    ssh_config_host: string;
+
+    @example("10.0.0.5")
+    @doc("The private IP address used for internal cluster traffic.")
+    private_ip: string;
+
+    @example("ubuntu")
+    @doc("An optional SSH user override.")
+    @minLength(1)
+    @maxLength(255)
+    ssh_user?: string;
+  }
+
+  @oneOf
+  @doc("A node using either a direct IP connection or an SSH config host.")
+  union AddNodeRequest {
+    directIp: DirectIpAddNodeRequest,
+    sshConfig: SshConfigAddNodeRequest,
   }
 
   model AddNodesRequest {
@@ -79,6 +117,7 @@ namespace Clustron.Ansible {
 
     @example("node-01")
     @doc("The Ansible hostname of the node.")
+    @pattern("^([a-zA-Z0-9]{1}[a-zA-Z0-9-]{0,62})(\\.[a-zA-Z0-9]{1}[a-zA-Z0-9-]{0,62})*?$")
     ansible_name: string;
 
     @example("192.168.1.100")
@@ -91,7 +130,7 @@ namespace Clustron.Ansible {
     private_ip?: string;
 
     @example("ubuntu")
-    ssh_user: string;
+    ssh_user?: string;
 
     @example("cluster-key")
     ssh_key_name?: string;
@@ -103,7 +142,7 @@ namespace Clustron.Ansible {
     @example("batch")
     slurm_partition?: string;
 
-    @example(ServerStatus.Provisioning)
+    @example(ServerStatus.Failed)
     @doc("The current status of the server. Will be 'provisioning' during Ansible execution.")
     status: ServerStatus;
 
@@ -112,9 +151,11 @@ namespace Clustron.Ansible {
     provision_detail?: string;
 
     @example(32)
+    @minValue(1)
     cpu_cores?: int32;
 
     @example(131072)
+    @minValue(1)
     memory_mb?: int32;
   }
 
@@ -133,7 +174,7 @@ namespace Clustron.Ansible {
       "123e4567-e89b-12d3-a456-426614174000",
       "987fcdeb-51a2-43d7-9012-345678901234"
     ])
-    @doc("List of group UUIDs allowed to log in.")
+    @doc("Group UUIDs allowed to log in to this server. An empty array clears the list.")
     groupIds: uuid[];
   }
 
@@ -183,23 +224,55 @@ namespace Clustron.Ansible {
   };
 
   @doc("Get the list of groups allowed to log in to servers.")
-  @route("/servers/allowedLoginGroups")
+  @route("/servers/{server_id}/allowedLoginGroups")
   @get
-  op getAllowedLoginGroups(): {
-    @statusCode statusCode: 200;
-    @body response: AllowedLoginGroupResponse[];
-  } | {
-    @statusCode statusCode: 500;
-  };
+  op getAllowedLoginGroups(
+    @doc("The target server UUID.")
+    @path
+    server_id: uuid,
+  ):
+    | {
+        @statusCode statusCode: 200;
+        @body response: AllowedLoginGroupResponse[];
+      }
+    | {
+        @statusCode statusCode: 400;
+      }
+    | {
+        @statusCode statusCode: 404;
+      }
+    | {
+        @statusCode statusCode: 500;
+      };
 
-  @doc("Update the list of groups allowed to log in. Fails if a group lacks a base LDAP group. Triggers a background job to re-render sssd.conf on all nodes.")
-  @route("/servers/allowedLoginGroups")
+  @doc("Update the allowed groups for a specific server. Head node can not have a allowed group list.")
+  @route("/servers/{server_id}/allowedLoginGroups")
   @put
-  op updateAllowedLoginGroups(@body req: UpdateAllowedLoginGroupsRequest): {
-    @statusCode statusCode: 204;
-  } | {
-    @statusCode statusCode: 400;
-  };
+  op updateAllowedLoginGroups(
+    @doc("The target server UUID.")
+    @path
+    server_id: uuid,
+
+    @body req: UpdateAllowedLoginGroupsRequest,
+  ):
+    | {
+        @statusCode statusCode: 204;
+      }
+    | {
+        @doc("UUID or request body is in the wrong format.")
+        @statusCode
+        statusCode: 400;
+      }
+    | {
+        @doc("server, group or ldap group not found.")
+        @statusCode
+        statusCode: 404;
+      }
+    | {
+        @doc("Set simple allowed group for head node.")
+        @statusCode
+        statusCode: 422;
+      };
 
   @doc("Get a specific server by its ID.")
   @route("/servers/{server_id}")
