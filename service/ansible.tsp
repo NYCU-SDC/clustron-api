@@ -65,6 +65,13 @@ namespace Clustron.Ansible {
     memory_mb?: int32;
   }
 
+  model AddNodesRequest {
+    @doc("Servers to add in one transaction.")
+    @minItems(1)
+    @maxItems(50)
+    servers: AddNodeRequest[];
+  }
+
   model ServerResponse {
     @example("123e4567-e89b-12d3-a456-426614174000")
     @doc("The unique identifier of the server.")
@@ -109,6 +116,10 @@ namespace Clustron.Ansible {
 
     @example(131072)
     memory_mb?: int32;
+  }
+
+  model AddNodesResponse {
+    servers: ServerResponse[];
   }
 
   model UpdateRoleRequest {
@@ -215,6 +226,18 @@ namespace Clustron.Ansible {
     @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 404;
+  };
+
+  @doc("Add 1–50 nodes in one transaction. Provisioning starts asynchronously after all records are created.")
+  @route("/servers/batch")
+  @post
+  op addNodes(@body req: AddNodesRequest): {
+    @statusCode statusCode: 201;
+    @body response: AddNodesResponse;
+  } | {
+    @statusCode statusCode: 400;
+  } | {
+    @statusCode statusCode: 500;
   };
 
   @doc("Reset a specific node's configuration/status. Triggers a background Ansible run and resets status to 'provisioning'.")
