@@ -30,7 +30,7 @@ namespace Clustron.Ansible {
     @maxLength(253)
     ansible_name: string;
 
-    @example("cluster-key")
+    @example("cluster.key")
     @doc("The name of the SSH key to use for connection.")
     @maxLength(255)
     ssh_key_name?: string;
@@ -174,8 +174,8 @@ namespace Clustron.Ansible {
       "123e4567-e89b-12d3-a456-426614174000",
       "987fcdeb-51a2-43d7-9012-345678901234"
     ])
-    @doc("Group UUIDs allowed to log in to this server. An empty array clears the list.")
-    groupIds: uuid[];
+    @doc("LDap Group UUIDs allowed to log in to this server. An empty array clears the list.")
+    LdapGroupIds: uuid[];
   }
 
   model AllowedLoginGroupResponse {
