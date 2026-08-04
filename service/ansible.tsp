@@ -174,21 +174,21 @@ namespace Clustron.Ansible {
       "123e4567-e89b-12d3-a456-426614174000",
       "987fcdeb-51a2-43d7-9012-345678901234"
     ])
-    @doc("LDap Group UUIDs allowed to log in to this server. An empty array clears the list.")
-    LdapGroupIds: uuid[];
+    @doc("LDAP group UUIDs (ldap_groups.id) allowed to log in to this server. An empty array clears the list.")
+    ldapGroupIds: uuid[];
   }
 
   model AllowedLoginGroupResponse {
     @example("123e4567-e89b-12d3-a456-426614174000")
-    @doc("The unique identifier of the group.")
-    groupId: uuid;
+    @doc("The unique identifier of the LDAP group (ldap_groups.id).")
+    ldapGroupId: uuid;
 
     @example("Administrators")
     @doc("The display title of the group.")
     title: string;
 
-    @example("cn=admins,ou=groups,dc=example,dc=com")
-    @doc("The LDAP Common Name associated with the group.")
+    @example("research-base")
+    @doc("The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups.")
     ldapCn: string;
   }
 
@@ -223,7 +223,7 @@ namespace Clustron.Ansible {
     @statusCode statusCode: 500;
   };
 
-  @doc("Get the list of groups allowed to log in to servers.")
+  @doc("Get the list of LDAP groups allowed to log in to a server.")
   @route("/servers/{server_id}/allowedLoginGroups")
   @get
   op getAllowedLoginGroups(
@@ -245,7 +245,7 @@ namespace Clustron.Ansible {
         @statusCode statusCode: 500;
       };
 
-  @doc("Update the allowed groups for a specific server. Head node can not have a allowed group list.")
+  @doc("Update the allowed LDAP groups for a specific server using ldap_groups.id values. Head nodes cannot have an allowed group list.")
   @route("/servers/{server_id}/allowedLoginGroups")
   @put
   op updateAllowedLoginGroups(
@@ -264,7 +264,7 @@ namespace Clustron.Ansible {
         statusCode: 400;
       }
     | {
-        @doc("server, group or ldap group not found.")
+        @doc("Server or LDAP group not found.")
         @statusCode
         statusCode: 404;
       }
