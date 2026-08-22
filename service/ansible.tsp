@@ -14,6 +14,12 @@ namespace Clustron.Ansible {
     Failed: "failed",
   }
 
+  @doc("The group type of an allowed login group.")
+  enum GroupType {
+    Admin: "ADMIN",
+    Base: "BASE",
+  }
+
   @doc("The supported Ansible roles for cluster nodes based on the playbook.")
   enum AnsibleRole {
     @doc("The head node of the cluster (NFS, LDAP, Slurm controller).")
@@ -169,13 +175,19 @@ namespace Clustron.Ansible {
     ansible_role: AnsibleRole;
   }
 
+  model AllowedLoginGroupParams {
+    @example("123e4567-e89b-12d3-a456-426614174000")
+    @doc("The ID of the group allowed to log in to this server.")
+    groupId: string;
+
+    @example(GroupType.Admin)
+    @doc("Type of the group.")
+    groupType: GroupType;
+  }
+
   model UpdateAllowedLoginGroupsRequest {
-    @example(#[
-      "123e4567-e89b-12d3-a456-426614174000",
-      "987fcdeb-51a2-43d7-9012-345678901234"
-    ])
-    @doc("LDAP group UUIDs (ldap_groups.id) allowed to log in to this server. An empty array clears the list.")
-    ldapGroupIds: uuid[];
+    @doc("Groups allowed to log in to this server. An empty array clears the list.")
+    allowedLoginGroups: AllowedLoginGroupParams[];
   }
 
   model AllowedLoginGroupResponse {
