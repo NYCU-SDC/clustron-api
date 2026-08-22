@@ -175,7 +175,8 @@ namespace Clustron.Ansible {
     ansible_role: AnsibleRole;
   }
 
-  model AllowedLoginGroupParams {
+  @doc("Groups allowed to log in to this server. An empty array clears the list.")
+  model UpdateAllowedLoginGroupParams {
     @example("123e4567-e89b-12d3-a456-426614174000")
     @doc("The ID of the group allowed to log in to this server.")
     groupId: string;
@@ -183,11 +184,6 @@ namespace Clustron.Ansible {
     @example(GroupType.Admin)
     @doc("Type of the group.")
     groupType: GroupType;
-  }
-
-  model UpdateAllowedLoginGroupsRequest {
-    @doc("Groups allowed to log in to this server. An empty array clears the list.")
-    allowedLoginGroups: AllowedLoginGroupParams[];
   }
 
   model AllowedLoginGroupResponse {
@@ -265,7 +261,7 @@ namespace Clustron.Ansible {
     @path
     server_id: uuid,
 
-    @body req: UpdateAllowedLoginGroupsRequest,
+    @body req: UpdateAllowedLoginGroupParams[],
   ):
     | {
         @statusCode statusCode: 204;
