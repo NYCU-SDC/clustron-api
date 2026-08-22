@@ -1277,33 +1277,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Ansible.AddNodeRequest'
-  /api/servers/allowedLoginGroups:
-    get:
-      operationId: Ansible_getAllowedLoginGroups
-      description: Get the list of groups allowed to log in to servers.
+  /api/servers/batch:
+    post:
+      operationId: Ansible_addNodes
+      description: Add 1–50 nodes in one transaction. Provisioning starts asynchronously after all records are created.
       parameters: []
       responses:
-        '200':
-          description: The request has succeeded.
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Ansible.AllowedLoginGroupResponse'
-        '500':
-          description: Server error
-      tags:
-        - Ansible
-    put:
-      operationId: Ansible_updateAllowedLoginGroups
-      description: Update the list of groups allowed to log in. Fails if a group lacks a base LDAP group. Triggers a background job to re-render sssd.conf on all nodes.
-      parameters: []
-      responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
+                $ref: '#/components/schemas/Ansible.AddNodesResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
+        '500':
+          description: Server error
       tags:
         - Ansible
       requestBody:
@@ -1311,7 +1300,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Ansible.UpdateAllowedLoginGroupsRequest'
+              $ref: '#/components/schemas/Ansible.AddNodesRequest'
   /api/servers/setup:
     post:
       operationId: Ansible_setupAllNodes
@@ -1363,6 +1352,63 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Ansible
+  /api/servers/{server_id}/allowedLoginGroups:
+    get:
+      operationId: Ansible_getAllowedLoginGroups
+      description: Get the list of LDAP groups allowed to log in to a server.
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          description: The target server UUID.
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ansible.AllowedLoginGroupResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '404':
+          description: The server cannot find the requested resource.
+        '500':
+          description: Server error
+      tags:
+        - Ansible
+    put:
+      operationId: Ansible_updateAllowedLoginGroups
+      description: Update the allowed LDAP groups for a specific server using ldap_groups.id values. Head nodes cannot have an allowed group list.
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          description: The target server UUID.
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '404':
+          description: The server cannot find the requested resource.
+        '422':
+          description: Client error
+      tags:
+        - Ansible
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Ansible.UpdateAllowedLoginGroupParams'
   /api/servers/{server_id}/reset:
     post:
       operationId: Ansible_resetNode
@@ -1743,45 +1789,25 @@ components:
           description: The website role of the user.
           examples:
             - USER
-    Ansible.AddNodeRequest:
+    Ansible.AddNodeCommonRequest:
       type: object
       required:
         - ansible_name
-        - ssh_user
         - ansible_role
       properties:
         ansible_name:
           type: string
           minLength: 1
+          maxLength: 253
           description: The Ansible hostname of the node.
           examples:
             - node-01
-        ip_address:
-          type: string
-          description: The IP address to connect to. Required if ssh_config_host is not provided.
-          examples:
-            - 192.168.1.100
-        ssh_config_host:
-          type: string
-          description: The SSH config host alias. Required if ip_address is not provided.
-          examples:
-            - my-cluster-node-1
-        private_ip:
-          type: string
-          description: The private IP address of the node.
-          examples:
-            - 10.0.0.5
-        ssh_user:
-          type: string
-          minLength: 1
-          description: The SSH user to connect as.
-          examples:
-            - ubuntu
         ssh_key_name:
           type: string
+          maxLength: 255
           description: The name of the SSH key to use for connection.
           examples:
-            - cluster-key
+            - cluster.key
         ansible_role:
           allOf:
             - $ref: '#/components/schemas/Ansible.AnsibleRole'
@@ -1790,32 +1816,61 @@ components:
             - compute_nodes
         slurm_partition:
           type: string
+          maxLength: 255
           description: The Slurm partition this node belongs to.
           examples:
             - batch
         cpu_cores:
           type: integer
           format: int32
+          minimum: 1
           description: Number of CPU cores.
           examples:
             - 32
         memory_mb:
           type: integer
           format: int32
+          minimum: 1
           description: Amount of memory in MB.
           examples:
             - 131072
+    Ansible.AddNodeRequest:
+      oneOf:
+        - $ref: '#/components/schemas/Ansible.DirectIpAddNodeRequest'
+        - $ref: '#/components/schemas/Ansible.SshConfigAddNodeRequest'
+      description: A node using either a direct IP connection or an SSH config host.
+    Ansible.AddNodesRequest:
+      type: object
+      required:
+        - servers
+      properties:
+        servers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ansible.AddNodeRequest'
+          minItems: 1
+          maxItems: 50
+          description: Servers to add in one transaction.
+    Ansible.AddNodesResponse:
+      type: object
+      required:
+        - servers
+      properties:
+        servers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ansible.ServerResponse'
     Ansible.AllowedLoginGroupResponse:
       type: object
       required:
-        - groupId
+        - ldapGroupId
         - title
         - ldapCn
       properties:
-        groupId:
+        ldapGroupId:
           allOf:
             - $ref: '#/components/schemas/uuid'
-          description: The unique identifier of the group.
+          description: The unique identifier of the LDAP group (ldap_groups.id).
           examples:
             - 123e4567-e89b-12d3-a456-426614174000
         title:
@@ -1825,21 +1880,58 @@ components:
             - Administrators
         ldapCn:
           type: string
-          description: The LDAP Common Name associated with the group.
+          description: The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups.
           examples:
-            - cn=admins,ou=groups,dc=example,dc=com
+            - research-base
     Ansible.AnsibleRole:
       type: string
       enum:
         - head_nodes
         - compute_nodes
       description: The supported Ansible roles for cluster nodes based on the playbook.
+    Ansible.DirectIpAddNodeRequest:
+      type: object
+      required:
+        - ip_address
+        - ssh_user
+      properties:
+        ip_address:
+          type: string
+          description: The IP address used to connect to the node.
+          examples:
+            - 192.168.1.100
+        ssh_user:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: The SSH user used to connect to the node.
+          examples:
+            - ubuntu
+        ssh_config_host:
+          type: string
+          maxLength: 255
+          description: An optional SSH config host alias.
+          examples:
+            - my-cluster-node-1
+        private_ip:
+          type: string
+          description: An optional private IP address used for internal cluster traffic.
+          examples:
+            - 10.0.0.5
+      allOf:
+        - $ref: '#/components/schemas/Ansible.AddNodeCommonRequest'
+      description: A node connected directly by IP address.
+    Ansible.GroupType:
+      type: string
+      enum:
+        - ADMIN
+        - BASE
+      description: The group type of an allowed login group.
     Ansible.ServerResponse:
       type: object
       required:
         - id
         - ansible_name
-        - ssh_user
         - ansible_role
         - status
       properties:
@@ -1851,6 +1943,7 @@ components:
             - 123e4567-e89b-12d3-a456-426614174000
         ansible_name:
           type: string
+          pattern: ^([a-zA-Z0-9]{1}[a-zA-Z0-9-]{0,62})(\.[a-zA-Z0-9]{1}[a-zA-Z0-9-]{0,62})*?$
           description: The Ansible hostname of the node.
           examples:
             - node-01
@@ -1889,7 +1982,7 @@ components:
             - $ref: '#/components/schemas/Ansible.ServerStatus'
           description: The current status of the server. Will be 'provisioning' during Ansible execution.
           examples:
-            - provisioning
+            - failed
         provision_detail:
           type: string
           description: Detailed information about the last provisioning task or error summary.
@@ -1900,11 +1993,13 @@ components:
         cpu_cores:
           type: integer
           format: int32
+          minimum: 1
           examples:
             - 32
         memory_mb:
           type: integer
           format: int32
+          minimum: 1
           examples:
             - 131072
     Ansible.ServerStatus:
@@ -1915,19 +2010,52 @@ components:
         - active
         - failed
       description: The deployment status of the server node.
-    Ansible.UpdateAllowedLoginGroupsRequest:
+    Ansible.SshConfigAddNodeRequest:
       type: object
       required:
-        - groupIds
+        - ssh_config_host
+        - private_ip
       properties:
-        groupIds:
-          type: array
-          items:
-            $ref: '#/components/schemas/uuid'
-          description: List of group UUIDs allowed to log in.
+        ssh_config_host:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: The SSH config host alias used to connect to the node.
           examples:
-            - - 123e4567-e89b-12d3-a456-426614174000
-              - 987fcdeb-51a2-43d7-9012-345678901234
+            - my-cluster-node-1
+        private_ip:
+          type: string
+          description: The private IP address used for internal cluster traffic.
+          examples:
+            - 10.0.0.5
+        ssh_user:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: An optional SSH user override.
+          examples:
+            - ubuntu
+      allOf:
+        - $ref: '#/components/schemas/Ansible.AddNodeCommonRequest'
+      description: A node connected through an SSH config host alias.
+    Ansible.UpdateAllowedLoginGroupParams:
+      type: object
+      required:
+        - groupId
+        - groupType
+      properties:
+        groupId:
+          type: string
+          description: The ID of the group allowed to log in to this server.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
+        groupType:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.GroupType'
+          description: Type of the group.
+          examples:
+            - ADMIN
+      description: Groups allowed to log in to this server. An empty array clears the list.
     Ansible.UpdateRoleRequest:
       type: object
       properties:
