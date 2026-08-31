@@ -200,6 +200,27 @@ namespace Clustron.Ansible {
     ldapCn: string;
   }
 
+  @doc("A group allowed to submit jobs to a Slurm partition.")
+  model PartitionAllowedGroupResponse {
+    @example("123e4567-e89b-12d3-a456-426614174000")
+    @doc("The unique identifier of the group.")
+    groupId: uuid;
+
+    @example("Research Lab")
+    @doc("The display title of the group.")
+    title: string;
+
+    @example("research-base")
+    @doc("The LDAP Common Name of the group.")
+    ldapCn: string;
+  }
+
+  @doc("Group IDs allowed to submit jobs to a partition. An empty array reopens the partition to all groups.")
+  model UpdatePartitionAllowedGroupsRequest {
+    @doc("The IDs of the groups allowed to submit jobs to this partition.")
+    groupIds: uuid[];
+  }
+
   // --- Operations ---
 
   @doc("List all managed servers.")
@@ -281,6 +302,41 @@ namespace Clustron.Ansible {
         @statusCode
         statusCode: 422;
       };
+
+  @doc("Get the groups allowed to submit jobs to a Slurm partition.")
+  @route("/partitions/{partition_name}/allowedGroups")
+  @get
+  op getPartitionAllowedGroups(
+    @doc("The name of the Slurm partition.")
+    @path
+    partition_name: string,
+  ): {
+    @statusCode statusCode: 200;
+    @body response: PartitionAllowedGroupResponse[];
+  } | {
+    @statusCode statusCode: 500;
+  };
+
+  @doc("Set the groups allowed to submit jobs to a Slurm partition. An empty array reopens the partition to all groups.")
+  @route("/partitions/{partition_name}/allowedGroups")
+  @put
+  op updatePartitionAllowedGroups(
+    @doc("The name of the Slurm partition.")
+    @path
+    partition_name: string,
+
+    @body req: UpdatePartitionAllowedGroupsRequest,
+  ): {
+    @statusCode statusCode: 204;
+  } | {
+    @doc("Request body is in the wrong format.")
+    @statusCode
+    statusCode: 400;
+  } | {
+    @doc("One or more group IDs not found.")
+    @statusCode
+    statusCode: 404;
+  };
 
   @doc("Get a specific server by its ID.")
   @route("/servers/{server_id}")
