@@ -188,14 +188,18 @@ namespace Clustron.Ansible {
 
   model AllowedLoginGroupResponse {
     @example("123e4567-e89b-12d3-a456-426614174000")
-    @doc("The unique identifier of the LDAP group (ldap_groups.id).")
-    ldapGroupId: uuid;
+    @doc("The group ID.")
+    groupId: uuid;
+
+    @example(GroupType.Admin)
+    @doc("allowed login group type.")
+    type: GroupType;
 
     @example("Administrators")
     @doc("The display title of the group.")
     title: string;
 
-    @example("research-base")
+    @example("research")
     @doc("The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups.")
     ldapCn: string;
   }
