@@ -186,7 +186,8 @@ namespace Clustron.Ansible {
     groupType: GroupType;
   }
 
-  model AllowedLoginGroupResponse {
+  @doc("Short representation of an LDAP group.")
+  model LdapGroupSummaryResponse {
     @example("123e4567-e89b-12d3-a456-426614174000")
     @doc("The unique identifier of the LDAP group (ldap_groups.id).")
     ldapGroupId: uuid;
@@ -196,29 +197,40 @@ namespace Clustron.Ansible {
     title: string;
 
     @example("research-base")
-    @doc("The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups.")
+    @doc("The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups or Slurm AllowGroups.")
     ldapCn: string;
   }
 
-  @doc("A group allowed to submit jobs to a Slurm partition.")
-  model PartitionAllowedGroupResponse {
-    @example("123e4567-e89b-12d3-a456-426614174000")
-    @doc("The unique identifier of the group.")
-    groupId: uuid;
+  @doc("How a Slurm partition restricts which groups may submit jobs.")
+  enum PartitionAccessMode {
+    @doc("Every group may submit jobs to the partition.")
+    All: "ALL",
 
-    @example("Research Lab")
-    @doc("The display title of the group.")
-    title: string;
+    @doc("No group may submit jobs to the partition.")
+    None: "NONE",
 
-    @example("research-base")
-    @doc("The LDAP Common Name of the group.")
-    ldapCn: string;
+    @doc("Only the listed groups may submit jobs to the partition.")
+    Groups: "GROUPS",
   }
 
-  @doc("Group IDs allowed to submit jobs to a partition. An empty array reopens the partition to all groups.")
+  @doc("The access policy of a Slurm partition.")
+  model PartitionAllowedGroupsResponse {
+    @example(PartitionAccessMode.Groups)
+    @doc("How the partition restricts job submission.")
+    access: PartitionAccessMode;
+
+    @doc("The groups allowed to submit jobs. Always empty unless `access` is `GROUPS`.")
+    groups: LdapGroupSummaryResponse[];
+  }
+
+  @doc("The access policy to apply to a Slurm partition.")
   model UpdatePartitionAllowedGroupsRequest {
-    @doc("The IDs of the groups allowed to submit jobs to this partition.")
-    groupIds: uuid[];
+    @example(PartitionAccessMode.Groups)
+    @doc("How the partition should restrict job submission.")
+    access: PartitionAccessMode;
+
+    @doc("The IDs of the LDAP groups allowed to submit jobs to this partition. Required and non-empty when `access` is `GROUPS`; must be omitted or empty otherwise.")
+    ldapGroupIds?: uuid[];
   }
 
   // --- Operations ---
@@ -262,7 +274,7 @@ namespace Clustron.Ansible {
   ):
     | {
         @statusCode statusCode: 200;
-        @body response: AllowedLoginGroupResponse[];
+        @body response: LdapGroupSummaryResponse[];
       }
     | {
         @statusCode statusCode: 400;
@@ -303,7 +315,7 @@ namespace Clustron.Ansible {
         statusCode: 422;
       };
 
-  @doc("Get the groups allowed to submit jobs to a Slurm partition.")
+  @doc("Get the access policy of a Slurm partition, including the groups allowed to submit jobs to it.")
   @route("/partitions/{partition_name}/allowedGroups")
   @get
   op getPartitionAllowedGroups(
@@ -312,12 +324,12 @@ namespace Clustron.Ansible {
     partition_name: string,
   ): {
     @statusCode statusCode: 200;
-    @body response: PartitionAllowedGroupResponse[];
+    @body response: PartitionAllowedGroupsResponse;
   } | {
     @statusCode statusCode: 500;
   };
 
-  @doc("Set the groups allowed to submit jobs to a Slurm partition. An empty array reopens the partition to all groups.")
+  @doc("Set the access policy of a Slurm partition: open it to all groups (`ALL`), close it to every group (`NONE`), or restrict it to the listed groups (`GROUPS`).")
   @route("/partitions/{partition_name}/allowedGroups")
   @put
   op updatePartitionAllowedGroups(
@@ -329,11 +341,11 @@ namespace Clustron.Ansible {
   ): {
     @statusCode statusCode: 204;
   } | {
-    @doc("Request body is in the wrong format.")
+    @doc("Request body is in the wrong format, or `ldapGroupIds` does not match the requested `access` mode.")
     @statusCode
     statusCode: 400;
   } | {
-    @doc("One or more group IDs not found.")
+    @doc("Partition or one or more LDAP groups not found.")
     @statusCode
     statusCode: 404;
   };
