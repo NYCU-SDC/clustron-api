@@ -1863,16 +1863,23 @@ components:
     Ansible.AllowedLoginGroupResponse:
       type: object
       required:
-        - ldapGroupId
+        - groupId
+        - type
         - title
         - ldapCn
       properties:
-        ldapGroupId:
+        groupId:
           allOf:
             - $ref: '#/components/schemas/uuid'
-          description: The unique identifier of the LDAP group (ldap_groups.id).
+          description: The group ID.
           examples:
             - 123e4567-e89b-12d3-a456-426614174000
+        type:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.GroupType'
+          description: allowed login group type.
+          examples:
+            - ADMIN
         title:
           type: string
           description: The display title of the group.
@@ -1882,7 +1889,7 @@ components:
           type: string
           description: The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups.
           examples:
-            - research-base
+            - research
     Ansible.AnsibleRole:
       type: string
       enum:
