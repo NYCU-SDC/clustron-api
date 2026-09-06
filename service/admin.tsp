@@ -41,6 +41,19 @@ namespace Clustron.Admin {
     role: Role;
   }
 
+  model UserGroupResponse {
+    @doc("The group ID.")
+    @example("123e4567-e89b-12d3-a456-426614174100")
+    id: uuid;
+
+    @doc("The group title.")
+    @example("GPU Research Group")
+    title: string;
+
+    @doc("The target user's role in the group.")
+    role: Clustron.Groups.Role;
+  }
+
   model UpdateUserRoleRequest {
     @doc("The new role of the user.")
     @example(Role.Organizer)
@@ -134,6 +147,22 @@ namespace Clustron.Admin {
   } | {
     @statusCode statusCode: 403;
   };
+
+  @doc("get all groups where the target user has membership. Groups visible only through admin override or LDAP system groups are not included")
+  @route("/users/{id}/groups")
+  @get
+  op getUserGroups(@path id: uuid):
+    | {
+        @statusCode statusCode: 200;
+        @body groups: UserGroupResponse[];
+      }
+    | {
+        @statusCode statusCode: 403;
+      }
+    | {
+        @statusCode statusCode: 404;
+      }
+    | Error.InvalidUuidFormatProblem;
 
   @doc("update a user's global role")
   @route("/users/{id}/globalRole")
