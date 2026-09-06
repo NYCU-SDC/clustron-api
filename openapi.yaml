@@ -1597,6 +1597,33 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Admin.UpdateUserRoleRequest'
+  /api/users/{id}/groups:
+    get:
+      operationId: Admin_getUserGroups
+      description: get all groups where the target user has membership. Groups visible only through admin override or LDAP system groups are not included
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Admin.UserGroupResponse'
+        '400':
+          description: Invalid UUID format.
+        '403':
+          description: Access is forbidden.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Admin
   /api/users/{id}/ldapBind:
     put:
       operationId: Admin_bindUserToLinuxUserInLDAP
@@ -1751,6 +1778,28 @@ components:
           description: The new role of the user.
           examples:
             - ORGANIZER
+    Admin.UserGroupResponse:
+      type: object
+      required:
+        - id
+        - title
+        - role
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          description: The group ID.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174100
+        title:
+          type: string
+          description: The group title.
+          examples:
+            - GPU Research Group
+        role:
+          allOf:
+            - $ref: '#/components/schemas/Groups.Role'
+          description: The target user's role in the group.
     Admin.UserResponse:
       type: object
       required:
