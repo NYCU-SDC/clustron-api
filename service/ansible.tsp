@@ -201,36 +201,10 @@ namespace Clustron.Ansible {
     ldapCn: string;
   }
 
-  @doc("How a Slurm partition restricts which groups may submit jobs.")
-  enum PartitionAccessMode {
-    @doc("Every group may submit jobs to the partition.")
-    All: "ALL",
-
-    @doc("No group may submit jobs to the partition.")
-    None: "NONE",
-
-    @doc("Only the listed groups may submit jobs to the partition.")
-    Groups: "GROUPS",
-  }
-
-  @doc("The access policy of a Slurm partition.")
-  model PartitionAllowedGroupsResponse {
-    @example(PartitionAccessMode.Groups)
-    @doc("How the partition restricts job submission.")
-    access: PartitionAccessMode;
-
-    @doc("The groups allowed to submit jobs. Always empty unless `access` is `GROUPS`.")
-    groups: LdapGroupSummaryResponse[];
-  }
-
-  @doc("The access policy to apply to a Slurm partition.")
+  @doc("Group IDs allowed to submit jobs to a partition. An empty array clears the allow list, which removes the restriction and reopens the partition to all groups.")
   model UpdatePartitionAllowedGroupsRequest {
-    @example(PartitionAccessMode.Groups)
-    @doc("How the partition should restrict job submission.")
-    access: PartitionAccessMode;
-
-    @doc("The IDs of the LDAP groups allowed to submit jobs to this partition. Required and non-empty when `access` is `GROUPS`; must be omitted or empty otherwise.")
-    ldapGroupIds?: uuid[];
+    @doc("The IDs of the LDAP groups (ldap_groups.id) allowed to submit jobs to this partition.")
+    ldapGroupIds: uuid[];
   }
 
   // --- Operations ---
@@ -315,7 +289,7 @@ namespace Clustron.Ansible {
         statusCode: 422;
       };
 
-  @doc("Get the access policy of a Slurm partition, including the groups allowed to submit jobs to it.")
+  @doc("Get the groups allowed to submit jobs to a Slurm partition. An empty array means the partition is open to all groups.")
   @route("/partitions/{partition_name}/allowedGroups")
   @get
   op getPartitionAllowedGroups(
@@ -324,12 +298,12 @@ namespace Clustron.Ansible {
     partition_name: string,
   ): {
     @statusCode statusCode: 200;
-    @body response: PartitionAllowedGroupsResponse;
+    @body response: LdapGroupSummaryResponse[];
   } | {
     @statusCode statusCode: 500;
   };
 
-  @doc("Set the access policy of a Slurm partition: open it to all groups (`ALL`), close it to every group (`NONE`), or restrict it to the listed groups (`GROUPS`).")
+  @doc("Replace the groups allowed to submit jobs to a Slurm partition. The array is the complete new allow list; an empty array clears it and reopens the partition to all groups.")
   @route("/partitions/{partition_name}/allowedGroups")
   @put
   op updatePartitionAllowedGroups(
@@ -341,7 +315,7 @@ namespace Clustron.Ansible {
   ): {
     @statusCode statusCode: 204;
   } | {
-    @doc("Request body is in the wrong format, or `ldapGroupIds` does not match the requested `access` mode.")
+    @doc("Request body is in the wrong format.")
     @statusCode
     statusCode: 400;
   } | {
