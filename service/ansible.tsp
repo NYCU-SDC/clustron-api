@@ -201,7 +201,7 @@ namespace Clustron.Ansible {
     ldapCn: string;
   }
 
-  @doc("Group IDs allowed to submit jobs to a partition. An empty array clears the allow list, which removes the restriction and reopens the partition to all groups.")
+  @doc("Group IDs allowed to submit jobs to a partition. An empty array closes the partition: no group may submit jobs to it.")
   model UpdatePartitionAllowedGroupsRequest {
     @doc("The IDs of the LDAP groups (ldap_groups.id) allowed to submit jobs to this partition.")
     ldapGroupIds: uuid[];
@@ -289,7 +289,7 @@ namespace Clustron.Ansible {
         statusCode: 422;
       };
 
-  @doc("Get the groups allowed to submit jobs to a Slurm partition. An empty array means the partition is open to all groups.")
+  @doc("Get the groups allowed to submit jobs to a Slurm partition. An empty array means no group may submit jobs to it.")
   @route("/partitions/{partition_name}/allowedGroups")
   @get
   op getPartitionAllowedGroups(
@@ -303,7 +303,7 @@ namespace Clustron.Ansible {
     @statusCode statusCode: 500;
   };
 
-  @doc("Replace the groups allowed to submit jobs to a Slurm partition. The array is the complete new allow list; an empty array clears it and reopens the partition to all groups.")
+  @doc("Replace the groups allowed to submit jobs to a Slurm partition. The array is the complete new allow list; an empty array closes the partition to every group.")
   @route("/partitions/{partition_name}/allowedGroups")
   @put
   op updatePartitionAllowedGroups(
