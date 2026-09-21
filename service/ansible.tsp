@@ -60,13 +60,19 @@ namespace Clustron.Ansible {
     @minValue(1)
     memory_mb?: int32;
 
+    @doc("Per-node feature toggles. Both features are enabled when the object or an individual field is omitted, so existing clients keep the current behaviour. Features can only be disabled on compute nodes, and are set only at creation time.")
+    features?: NodeFeatures;
+  }
+
+  @doc("Per-node feature toggles. Every field defaults to true.")
+  model NodeFeatures {
     @example(true)
-    @doc("Whether to install Slurm on this node. When false, /opt/clustron_share and /etc/slurm are not mounted and the node is excluded from slurm.conf. Can only be false for compute nodes. Set only at creation time.")
-    enable_slurm?: boolean = true;
+    @doc("Whether to install Slurm on this node. When false, /opt/clustron_share and /etc/slurm are not mounted and the node is excluded from slurm.conf.")
+    slurm?: boolean = true;
 
     @example(true)
-    @doc("Whether to mount /home from the head node over NFS. When false, home directories are created on the node's local disk. Can only be false for compute nodes. Set only at creation time.")
-    mount_nfs_home?: boolean = true;
+    @doc("Whether to mount /home from the head node over NFS. When false, home directories are created on the node's local disk.")
+    nfs_home?: boolean = true;
   }
 
   @doc("A node connected directly by IP address.")
@@ -172,13 +178,19 @@ namespace Clustron.Ansible {
     @minValue(1)
     memory_mb?: int32;
 
+    @doc("The resolved feature toggles of this node. Always present.")
+    features: ServerFeatures;
+  }
+
+  @doc("The resolved per-node feature toggles.")
+  model ServerFeatures {
     @example(true)
     @doc("Whether Slurm is installed on this node.")
-    enable_slurm: boolean;
+    slurm: boolean;
 
     @example(true)
     @doc("Whether /home is mounted from the head node over NFS.")
-    mount_nfs_home: boolean;
+    nfs_home: boolean;
   }
 
   model AddNodesResponse {
@@ -241,7 +253,7 @@ namespace Clustron.Ansible {
   } | {
     @statusCode statusCode: 400;
   } | {
-    @doc("slurm and nfs home can only be disabled on compute nodes.")
+    @doc("A feature in `features` is false while `ansible_role` is not `compute_nodes`: slurm and nfs home can only be disabled on compute nodes.")
     @statusCode
     statusCode: 422;
   };
@@ -345,7 +357,7 @@ namespace Clustron.Ansible {
         @statusCode statusCode: 400;
       }
     | {
-        @doc("slurm and nfs home can only be disabled on compute nodes. Every server is validated before any is written; if one fails, none are created.")
+        @doc("A feature in `features` is false while `ansible_role` is not `compute_nodes`: slurm and nfs home can only be disabled on compute nodes. Every server is validated before any is written; if one fails, none are created.")
         @statusCode
         statusCode: 422;
       }
@@ -388,7 +400,7 @@ namespace Clustron.Ansible {
         @statusCode statusCode: 404;
       }
     | {
-        @doc("A server with slurm or nfs home disabled cannot become a head node.")
+        @doc("A server with a feature in `features` disabled cannot become a head node.")
         @statusCode
         statusCode: 409;
       };
