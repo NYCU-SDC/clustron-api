@@ -198,18 +198,24 @@ namespace Clustron.SystemGroup {
     @doc("The system group UUID.")
     @path
     id: uuid,
-  ): {
-    @statusCode statusCode: 200;
-    @body response: SystemGroupMemberResponse[];
-  } | {
-    @doc("Invalid UUID.")
-    @statusCode
-    statusCode: 400;
-  } | {
-    @doc("System group not found.")
-    @statusCode
-    statusCode: 404;
-  };
+  ):
+    | {
+        @statusCode statusCode: 200;
+        @body response: SystemGroupMemberResponse[];
+      }
+    | {
+        @doc("Invalid UUID.")
+        @statusCode
+        statusCode: 400;
+      }
+    | {
+        @doc("System group not found.")
+        @statusCode
+        statusCode: 404;
+      }
+    | {
+        @statusCode statusCode: 500;
+      };
 
   @doc("Add a user to the system group by adding their LDAP uid to the group's memberUid. Takes effect on the user's next login.")
   @route("/systemGroups/{id}/members")
