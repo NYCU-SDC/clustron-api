@@ -158,7 +158,7 @@ namespace Clustron.SystemGroup {
         statusCode: 404;
       }
     | {
-        @doc("The gid differs across compute nodes, the gid is used by another local group, or the name or gid is already registered.")
+        @doc("The gid differs across compute nodes, the gid is used by another local group, or the name or gid is already registered or used by another LDAP group.")
         @statusCode
         statusCode: 409;
       }
