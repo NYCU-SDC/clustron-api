@@ -85,6 +85,26 @@ namespace Clustron.SystemGroup {
     createdAt: utcDateTime;
   }
 
+  model AddSystemGroupMemberRequest {
+    @example("123e4567-e89b-12d3-a456-426614174001")
+    @doc("Clustron user ID. The user must have an LDAP account.")
+    userId: uuid;
+  }
+
+  @doc("A Clustron user that Clustron added to the system group.")
+  model SystemGroupMemberResponse {
+    @example("123e4567-e89b-12d3-a456-426614174001")
+    userId: uuid;
+
+    @example("alice@example.com")
+    email: email;
+
+    @example("Alice Chen")
+    fullName: string;
+
+    addedAt: utcDateTime;
+  }
+
   // --- Operations ---
 
   @doc("List registrable local groups discovered on active compute nodes.")
@@ -164,6 +184,87 @@ namespace Clustron.SystemGroup {
       }
     | {
         @doc("System group not found.")
+        @statusCode
+        statusCode: 404;
+      }
+    | {
+        @statusCode statusCode: 500;
+      };
+
+  @doc("List members Clustron added to the system group.")
+  @route("/systemGroups/{id}/members")
+  @get
+  op listSystemGroupMembers(
+    @doc("The system group UUID.")
+    @path
+    id: uuid,
+  ): {
+    @statusCode statusCode: 200;
+    @body response: SystemGroupMemberResponse[];
+  } | {
+    @doc("Invalid UUID.")
+    @statusCode
+    statusCode: 400;
+  } | {
+    @doc("System group not found.")
+    @statusCode
+    statusCode: 404;
+  };
+
+  @doc("Add a user to the system group by adding their LDAP uid to the group's memberUid. Takes effect on the user's next login.")
+  @route("/systemGroups/{id}/members")
+  @post
+  op addSystemGroupMember(
+    @doc("The system group UUID.")
+    @path
+    id: uuid,
+
+    @body req: AddSystemGroupMemberRequest,
+  ):
+    | {
+        @statusCode statusCode: 204;
+      }
+    | {
+        @doc("Invalid UUID or body, or the user has no LDAP account.")
+        @statusCode
+        statusCode: 400;
+      }
+    | {
+        @doc("System group not found.")
+        @statusCode
+        statusCode: 404;
+      }
+    | {
+        @doc("The user is already a member.")
+        @statusCode
+        statusCode: 409;
+      }
+    | {
+        @statusCode statusCode: 500;
+      };
+
+  @doc("Remove a user from the system group. A member whose LDAP account no longer exists is still removed.")
+  @route("/systemGroups/{id}/members/{user_id}")
+  @delete
+  op removeSystemGroupMember(
+    @doc("The system group UUID.")
+    @path
+    id: uuid,
+
+    @doc("The Clustron user UUID.")
+    @path
+    user_id: uuid,
+  ):
+    | {
+        @statusCode statusCode: 204;
+      }
+    | {
+        @doc("Invalid UUID.")
+        @statusCode
+        statusCode: 400;
+      }
+    | {
+        @doc("System group not found, or the user is not a member.")
         @statusCode
         statusCode: 404;
       }
