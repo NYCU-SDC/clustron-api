@@ -960,6 +960,55 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Job
+  /api/partitions/{partition_name}/allowedGroups:
+    get:
+      operationId: Ansible_getPartitionAllowedGroups
+      description: Get the groups allowed to submit jobs to a Slurm partition. An empty array means no group may submit jobs to it.
+      parameters:
+        - name: partition_name
+          in: path
+          required: true
+          description: The name of the Slurm partition.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ansible.LdapGroupSummaryResponse'
+        '500':
+          description: Server error
+      tags:
+        - Ansible
+    put:
+      operationId: Ansible_updatePartitionAllowedGroups
+      description: Replace the groups allowed to submit jobs to a Slurm partition. The array is the complete new allow list; an empty array closes the partition to every group.
+      parameters:
+        - name: partition_name
+          in: path
+          required: true
+          description: The name of the Slurm partition.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '404':
+          description: The server cannot find the requested resource.
+      tags:
+        - Ansible
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ansible.UpdatePartitionAllowedGroupsRequest'
   /api/password:
     put:
       operationId: User_changePassword
@@ -1371,7 +1420,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Ansible.AllowedLoginGroupResponse'
+                  $ref: '#/components/schemas/Ansible.LdapGroupSummaryResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
         '404':
@@ -1909,36 +1958,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Ansible.ServerResponse'
-    Ansible.AllowedLoginGroupResponse:
-      type: object
-      required:
-        - groupId
-        - type
-        - title
-        - ldapCn
-      properties:
-        groupId:
-          allOf:
-            - $ref: '#/components/schemas/uuid'
-          description: The group ID.
-          examples:
-            - 123e4567-e89b-12d3-a456-426614174000
-        type:
-          allOf:
-            - $ref: '#/components/schemas/Ansible.GroupType'
-          description: allowed login group type.
-          examples:
-            - ADMIN
-        title:
-          type: string
-          description: The display title of the group.
-          examples:
-            - Administrators
-        ldapCn:
-          type: string
-          description: The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups.
-          examples:
-            - research
     Ansible.AnsibleRole:
       type: string
       enum:
@@ -1983,6 +2002,37 @@ components:
         - ADMIN
         - BASE
       description: The group type of an allowed login group.
+    Ansible.LdapGroupSummaryResponse:
+      type: object
+      required:
+        - groupId
+        - type
+        - title
+        - ldapCn
+      properties:
+        groupId:
+          allOf:
+            - $ref: '#/components/schemas/uuid'
+          description: The group ID.
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
+        type:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.GroupType'
+          description: allowed login group type.
+          examples:
+            - ADMIN
+        title:
+          type: string
+          description: The display title of the group.
+          examples:
+            - Administrators
+        ldapCn:
+          type: string
+          description: The LDAP Common Name (ldap_groups.ldap_cn) written to SSSD simple_allow_groups or Slurm AllowGroups.
+          examples:
+            - research
+      description: Short representation of an LDAP group.
     Ansible.ServerResponse:
       type: object
       required:
@@ -2112,6 +2162,17 @@ components:
           examples:
             - ADMIN
       description: Groups allowed to log in to this server. An empty array clears the list.
+    Ansible.UpdatePartitionAllowedGroupsRequest:
+      type: object
+      required:
+        - ldapGroupIds
+      properties:
+        ldapGroupIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/uuid'
+          description: The IDs of the LDAP groups (ldap_groups.id) allowed to submit jobs to this partition.
+      description: 'Group IDs allowed to submit jobs to a partition. An empty array closes the partition: no group may submit jobs to it.'
     Ansible.UpdateRoleRequest:
       type: object
       properties:
