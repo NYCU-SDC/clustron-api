@@ -61,11 +61,11 @@ namespace Clustron.Ansible {
     memory_mb?: int32;
 
     @doc("Per-node feature toggles. Both features are enabled when the object or an individual field is omitted, so existing clients keep the current behaviour. Features can only be disabled on compute nodes, and are set only at creation time.")
-    features?: NodeFeatures;
+    features?: RequestFeatures;
   }
 
   @doc("Per-node feature toggles. Every field defaults to true.")
-  model NodeFeatures {
+  model RequestFeatures {
     @example(true)
     @doc("Whether to install Slurm on this node. When false, /opt/clustron_share and /etc/slurm are not mounted and the node is excluded from slurm.conf.")
     slurm?: boolean = true;
@@ -179,11 +179,11 @@ namespace Clustron.Ansible {
     memory_mb?: int32;
 
     @doc("The resolved feature toggles of this node. Always present.")
-    features: ServerFeatures;
+    features: ResponseFeatures;
   }
 
   @doc("The resolved per-node feature toggles.")
-  model ServerFeatures {
+  model ResponseFeatures {
     @example(true)
     @doc("Whether Slurm is installed on this node.")
     slurm: boolean;
