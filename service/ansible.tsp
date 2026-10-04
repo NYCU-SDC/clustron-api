@@ -59,6 +59,20 @@ namespace Clustron.Ansible {
     @doc("Amount of memory in MB.")
     @minValue(1)
     memory_mb?: int32;
+
+    @doc("Per-node feature toggles. Both features are enabled when the object or an individual field is omitted, so existing clients keep the current behaviour. Features can only be disabled on compute nodes, and are set only at creation time.")
+    features?: RequestFeatures;
+  }
+
+  @doc("Per-node feature toggles. Every field defaults to true.")
+  model RequestFeatures {
+    @example(true)
+    @doc("Whether to install Slurm on this node. When false, /opt/clustron_share and /etc/slurm are not mounted and the node is excluded from slurm.conf.")
+    slurm?: boolean = true;
+
+    @example(true)
+    @doc("Whether to mount /home from the head node over NFS. When false, home directories are created on the node's local disk.")
+    nfs_home?: boolean = true;
   }
 
   @doc("A node connected directly by IP address.")
@@ -163,6 +177,20 @@ namespace Clustron.Ansible {
     @example(131072)
     @minValue(1)
     memory_mb?: int32;
+
+    @doc("The resolved feature toggles of this node. Always present.")
+    features: ResponseFeatures;
+  }
+
+  @doc("The resolved per-node feature toggles.")
+  model ResponseFeatures {
+    @example(true)
+    @doc("Whether Slurm is installed on this node.")
+    slurm: boolean;
+
+    @example(true)
+    @doc("Whether /home is mounted from the head node over NFS.")
+    nfs_home: boolean;
   }
 
   model AddNodesResponse {
@@ -224,9 +252,13 @@ namespace Clustron.Ansible {
     @body response: ServerResponse;
   } | {
     @statusCode statusCode: 400;
+  } | {
+    @doc("A feature in `features` is false while `ansible_role` is not `compute_nodes`: slurm and nfs home can only be disabled on compute nodes.")
+    @statusCode
+    statusCode: 422;
   };
 
-  @doc("Trigger the setup process for all nodes. This is an asynchronous operation running cluster-wide.")
+  @doc("Trigger the setup process for all nodes. This is an asynchronous operation running cluster-wide. A legacy NFS mount of the whole /opt is unmounted automatically; only /opt/clustron_share is shared.")
   @route("/servers/setup")
   @post
   op setupAllNodes(): {
@@ -316,16 +348,24 @@ namespace Clustron.Ansible {
   @doc("Add 1–50 nodes in one transaction. Provisioning starts asynchronously after all records are created.")
   @route("/servers/batch")
   @post
-  op addNodes(@body req: AddNodesRequest): {
-    @statusCode statusCode: 201;
-    @body response: AddNodesResponse;
-  } | {
-    @statusCode statusCode: 400;
-  } | {
-    @statusCode statusCode: 500;
-  };
+  op addNodes(@body req: AddNodesRequest):
+    | {
+        @statusCode statusCode: 201;
+        @body response: AddNodesResponse;
+      }
+    | {
+        @statusCode statusCode: 400;
+      }
+    | {
+        @doc("A feature in `features` is false while `ansible_role` is not `compute_nodes`: slurm and nfs home can only be disabled on compute nodes. Every server is validated before any is written; if one fails, none are created.")
+        @statusCode
+        statusCode: 422;
+      }
+    | {
+        @statusCode statusCode: 500;
+      };
 
-  @doc("Reset a specific node's configuration/status. Triggers a background Ansible run and resets status to 'provisioning'.")
+  @doc("Reset a specific node's configuration/status. Triggers a background Ansible run and resets status to 'provisioning'. A legacy NFS mount of the whole /opt is unmounted automatically; only /opt/clustron_share is shared.")
   @route("/servers/{server_id}/reset")
   @post
   op resetNode(
@@ -348,12 +388,20 @@ namespace Clustron.Ansible {
     server_id: uuid,
 
     @body req: UpdateRoleRequest,
-  ): {
-    @statusCode statusCode: 200;
-    @body response: ServerResponse;
-  } | {
-    @statusCode statusCode: 400;
-  } | {
-    @statusCode statusCode: 404;
-  };
+  ):
+    | {
+        @statusCode statusCode: 200;
+        @body response: ServerResponse;
+      }
+    | {
+        @statusCode statusCode: 400;
+      }
+    | {
+        @statusCode statusCode: 404;
+      }
+    | {
+        @doc("A server with a feature in `features` disabled cannot become a head node.")
+        @statusCode
+        statusCode: 409;
+      };
 }
