@@ -1318,6 +1318,8 @@ paths:
                 $ref: '#/components/schemas/Ansible.ServerResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
+        '422':
+          description: Client error
       tags:
         - Ansible
       requestBody:
@@ -1340,6 +1342,8 @@ paths:
                 $ref: '#/components/schemas/Ansible.AddNodesResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
+        '422':
+          description: Client error
         '500':
           description: Server error
       tags:
@@ -1353,7 +1357,7 @@ paths:
   /api/servers/setup:
     post:
       operationId: Ansible_setupAllNodes
-      description: Trigger the setup process for all nodes. This is an asynchronous operation running cluster-wide.
+      description: Trigger the setup process for all nodes. This is an asynchronous operation running cluster-wide. A legacy NFS mount of the whole /opt is unmounted automatically; only /opt/clustron_share is shared.
       parameters: []
       responses:
         '204':
@@ -1461,7 +1465,7 @@ paths:
   /api/servers/{server_id}/reset:
     post:
       operationId: Ansible_resetNode
-      description: Reset a specific node's configuration/status. Triggers a background Ansible run and resets status to 'provisioning'.
+      description: Reset a specific node's configuration/status. Triggers a background Ansible run and resets status to 'provisioning'. A legacy NFS mount of the whole /opt is unmounted automatically; only /opt/clustron_share is shared.
       parameters:
         - name: server_id
           in: path
@@ -1502,6 +1506,8 @@ paths:
           description: The server could not understand the request due to invalid syntax.
         '404':
           description: The server cannot find the requested resource.
+        '409':
+          description: The request conflicts with the current state of the server.
       tags:
         - Ansible
       requestBody:
@@ -1932,6 +1938,10 @@ components:
           description: Amount of memory in MB.
           examples:
             - 131072
+        features:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.RequestFeatures'
+          description: Per-node feature toggles. Both features are enabled when the object or an individual field is omitted, so existing clients keep the current behaviour. Features can only be disabled on compute nodes, and are set only at creation time.
     Ansible.AddNodeRequest:
       oneOf:
         - $ref: '#/components/schemas/Ansible.DirectIpAddNodeRequest'
@@ -2033,6 +2043,39 @@ components:
           examples:
             - research
       description: Short representation of an LDAP group.
+    Ansible.RequestFeatures:
+      type: object
+      properties:
+        slurm:
+          type: boolean
+          description: Whether to install Slurm on this node. When false, /opt/clustron_share and /etc/slurm are not mounted and the node is excluded from slurm.conf.
+          examples:
+            - true
+          default: true
+        nfs_home:
+          type: boolean
+          description: Whether to mount /home from the head node over NFS. When false, home directories are created on the node's local disk.
+          examples:
+            - true
+          default: true
+      description: Per-node feature toggles. Every field defaults to true.
+    Ansible.ResponseFeatures:
+      type: object
+      required:
+        - slurm
+        - nfs_home
+      properties:
+        slurm:
+          type: boolean
+          description: Whether Slurm is installed on this node.
+          examples:
+            - true
+        nfs_home:
+          type: boolean
+          description: Whether /home is mounted from the head node over NFS.
+          examples:
+            - true
+      description: The resolved per-node feature toggles.
     Ansible.ServerResponse:
       type: object
       required:
@@ -2040,6 +2083,7 @@ components:
         - ansible_name
         - ansible_role
         - status
+        - features
       properties:
         id:
           allOf:
@@ -2108,6 +2152,10 @@ components:
           minimum: 1
           examples:
             - 131072
+        features:
+          allOf:
+            - $ref: '#/components/schemas/Ansible.ResponseFeatures'
+          description: The resolved feature toggles of this node. Always present.
     Ansible.ServerStatus:
       type: string
       enum:
