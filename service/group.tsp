@@ -243,10 +243,17 @@ namespace Clustron.Groups {
     identifier: string;
   }
 
+  model SearchGroupParams {
+    @doc("Case-insensitive prefix search on the group title or LDAP group name. If omitted or empty, all groups are returned.")
+    @example("gpu")
+    @query
+    search?: string;
+  }
+
   @doc("Get all groups of the user.")
   @route("/groups")
   @get
-  op getGroups(...PaginatedParams): {
+  op getGroups(...PaginatedParams, ...SearchGroupParams): {
     @statusCode statusCode: 200;
     @body groups: PaginatedResponse<GroupResponse>;
   } | {
