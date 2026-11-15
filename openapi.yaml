@@ -76,6 +76,7 @@ paths:
         - $ref: '#/components/parameters/PaginatedParams.size'
         - $ref: '#/components/parameters/PaginatedParams.sort'
         - $ref: '#/components/parameters/PaginatedParams.sortBy'
+        - $ref: '#/components/parameters/Groups.SearchGroupParams'
       responses:
         '200':
           description: The request has succeeded.
@@ -1919,6 +1920,14 @@ components:
           - fullName
           - email
           - studentID
+      explode: false
+    Groups.SearchGroupParams:
+      name: search
+      in: query
+      required: false
+      description: Case-insensitive prefix search on the group title or LDAP group name. If omitted or empty, all groups are returned.
+      schema:
+        type: string
       explode: false
     Job.FilterParams.filterBy:
       name: filterBy
