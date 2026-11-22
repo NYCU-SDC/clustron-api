@@ -41,6 +41,15 @@ namespace Clustron.Ansible {
     @maxLength(255)
     ssh_key_name?: string;
 
+    @example("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID...")
+    @doc("""
+      The trusted SSH host key (authorized-key form) to pin for this node, as returned by a prior
+      successful health check. Rendered into the Ansible known_hosts so the deploy verifies the
+      host instead of blocking on a first-connect prompt.
+      """)
+    @maxLength(1024)
+    host_key?: string;
+
     @example(AnsibleRole.ComputeNodes)
     @doc("The Ansible role assigned to this node.")
     ansible_role: AnsibleRole;
@@ -130,6 +139,121 @@ namespace Clustron.Ansible {
     servers: AddNodeRequest[];
   }
 
+  @doc("The trust state of a scanned SSH host key.")
+  enum HostKeyStatus {
+    @doc("No trusted key was supplied; the client must confirm the returned fingerprint.")
+    New: "new",
+
+    @doc("A trusted key was supplied but the live host key differs; ask the user to re-trust.")
+    Changed: "changed",
+
+    @doc("The live host key matches the supplied trusted key.")
+    Ok: "ok",
+
+    @doc("Host key handled by Ansible/OpenSSH (ssh_config_host alias path); not scanned in Go.")
+    Skipped: "skipped",
+  }
+
+  @doc("Direct-IP connection details to health-check before a node is created.")
+  model DirectIpHealthCheckRequest {
+    @example("node-01")
+    @maxLength(253)
+    ansible_name: string;
+
+    @example("192.168.1.100")
+    @doc("The IP address used to connect to the node.")
+    ip_address: string;
+
+    @example("ubuntu")
+    @minLength(1)
+    @maxLength(255)
+    ssh_user: string;
+
+    @example("cluster.key")
+    @maxLength(255)
+    ssh_key_name?: string;
+
+    @example("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID...")
+    @doc("""
+      The host key the client has chosen to trust (authorized-key form). Omit on the first call:
+      the backend scans the live key and returns it with host_key_status 'new' for confirmation.
+      Send it back on the follow-up call to proceed through login and the Ansible ping.
+      """)
+    @maxLength(1024)
+    trusted_host_key?: string;
+  }
+
+  @doc("SSH-config-alias connection details to health-check before a node is created.")
+  model SshConfigHealthCheckRequest {
+    @example("node-01")
+    @maxLength(253)
+    ansible_name: string;
+
+    @example("my-cluster-node-1")
+    @minLength(1)
+    @maxLength(255)
+    ssh_config_host: string;
+
+    @example("ubuntu")
+    @minLength(1)
+    @maxLength(255)
+    ssh_user?: string;
+
+    @example("cluster.key")
+    @maxLength(255)
+    ssh_key_name?: string;
+  }
+
+  @oneOf
+  @doc("A health-check target using either a direct IP connection or an SSH config host alias.")
+  union HealthCheckRequest {
+    directIp: DirectIpHealthCheckRequest,
+    sshConfig: SshConfigHealthCheckRequest,
+  }
+
+  @doc("""
+    The outcome of a connection health check. `ok` is true only when every applicable stage
+    passed. When `host_key_status` is 'new' or 'changed', `ok` is false and the client should
+    show the `fingerprint` for the user to trust, then retry with `trusted_host_key` set to
+    `host_key`.
+    """)
+  model HealthCheckResponse {
+    @example(false)
+    @doc("Whether the whole check passed.")
+    ok: boolean;
+
+    @example("host_key")
+    @doc("The stage reached: reachable, host_key, login, ansible_ping, or done.")
+    stage: string;
+
+    @example(true)
+    @doc("Whether the host accepted a TCP connection on SSH (direct-IP path).")
+    reachable: boolean;
+
+    @example("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID...")
+    @doc("The live host key in authorized-key form (direct-IP path).")
+    host_key?: string;
+
+    @example("SHA256:abc123...")
+    @doc("SHA256 fingerprint of the host key, for the user to confirm.")
+    fingerprint?: string;
+
+    @doc("The trust state of the scanned host key.")
+    host_key_status: HostKeyStatus;
+
+    @example(false)
+    @doc("Whether the provided identity logged in successfully (direct-IP path).")
+    login_ok: boolean;
+
+    @example(false)
+    @doc("Whether `ansible -m ping -b` succeeded (usable Python interpreter and become/sudo).")
+    ansible_ping_ok: boolean;
+
+    @example("login as \"ubuntu\" failed: ssh: unable to authenticate")
+    @doc("Human-readable detail about a failed or incomplete stage.")
+    detail?: string;
+  }
+
   model ServerResponse {
     @example("123e4567-e89b-12d3-a456-426614174000")
     @doc("The unique identifier of the server.")
@@ -154,6 +278,10 @@ namespace Clustron.Ansible {
 
     @example("cluster-key")
     ssh_key_name?: string;
+
+    @example("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID...")
+    @doc("The pinned SSH host key (authorized-key form) used to verify this node during deploys.")
+    host_key?: string;
 
     @example(AnsibleRole.ComputeNodes)
     @doc("The Ansible role assigned to this node.")
@@ -263,6 +391,23 @@ namespace Clustron.Ansible {
     @doc("A feature in `features` is false while `ansible_role` is not `compute_nodes`: slurm and nfs home can only be disabled on compute nodes.")
     @statusCode
     statusCode: 422;
+  };
+
+  @doc("""
+    Validate a node's SSH connection before it is created: reachability, host-key trust, key
+    login, and an `ansible -m ping -b` check. No server row is created. Runs synchronously and
+    returns 200 with the per-stage outcome. On an unknown or changed host key it returns
+    ok=false with the scanned fingerprint; the client confirms, then retries with
+    `trusted_host_key` set. Direct-IP targets get the full check; ssh_config_host aliases are
+    validated by the Ansible ping only (host_key_status 'skipped').
+    """)
+  @route("/servers/healthCheck")
+  @post
+  op healthCheckNode(@body req: HealthCheckRequest): {
+    @statusCode statusCode: 200;
+    @body response: HealthCheckResponse;
+  } | {
+    @statusCode statusCode: 400;
   };
 
   @doc("Trigger the setup process for all nodes. This is an asynchronous operation running cluster-wide. A legacy NFS mount of the whole /opt is unmounted automatically; only /opt/clustron_share is shared.")
