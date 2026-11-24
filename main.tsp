@@ -10,6 +10,7 @@ import "./service/module.tsp";
 import "./service/setup.tsp";
 import "./service/ansible.tsp";
 import "./service/systemgroup.tsp";
+import "./service/file.tsp";
 
 using Http;
 using Versioning;
